@@ -68,7 +68,7 @@
             <event>end_of_day</event>
           </script>
         </manager>
-        <operations name="FertiliserSimpleRules">
+        <operations name="FertiliserSimpleRules" enabled="no">
           <operation condition="start_of_day">
             <date>15-sep</date>
             <action>fertiliser apply amount= 15 (kg/ha), type= urea_N (), depth= 10 (mm)</action>
@@ -90,7 +90,7 @@
             <action>fertiliser apply amount= 50 (kg/ha), type= urea_N(), depth= 10 (mm)</action>
           </operation>
         </operations>
-        <manager name="Tillage">
+        <manager name="Tillage" enabled="no">
           <ui>
             <category type="category" description="When should tillage be performed" />
             <modulename type="modulename" description="The module the event come from : ">maize</modulename>
@@ -106,8 +106,8 @@
             <event>sowing</event>
           </script>
         </manager>
-        <irrigation name="Irrigation">
-          <automatic_irrigation type="list" listvalues="on,off" description="Automatic irrigation">on</automatic_irrigation>
+        <irrigation name="Irrigation" enabled="no">
+          <automatic_irrigation type="list" listvalues="on,off" description="Automatic irrigation">off</automatic_irrigation>
           <asw_depth type="text" description="Depth to which ASW is calculated. (mm)">600</asw_depth>
           <crit_fr_asw type="text" description="Fraction of ASW below which irrigation is applied (0-1.0)">0.7</crit_fr_asw>
           <irrigation_efficiency type="text" description="Efficiency of the irrigation. (0-1.0)">1</irrigation_efficiency>
@@ -118,7 +118,7 @@
           <default_cl_conc type="text" description="Chloride concentration (ppm Cl)">0.0</default_cl_conc>
         </irrigation>
       </folder>
-      <outputfile>
+      <outputfile enabled="no">
         <filename output="yes">Maize_SWIM3 ConvTill.out</filename>
         <title>Maize_SWIM3 ConvTill</title>
         <variables name="Variables">
@@ -208,6 +208,8 @@ HarvIndex = 0</text>
           <variable>fertiliser</variable>
           <variable>irrigation</variable>
           <variable>rain</variable>
+          <variable>es as evaporation</variable>
+          <variable>drain</variable>
           <variable>sw_dep()</variable>
           <variable>dnit() as denitrification</variable>
           <variable>surfaceom_n</variable>
@@ -217,6 +219,9 @@ HarvIndex = 0</text>
           <variable>urea()</variable>
           <variable>nh4()</variable>
           <variable>no3()</variable>
+          <variable>sat_dep()</variable>
+          <variable>dul_dep()</variable>
+          <variable>ll15_dep()</variable>
         </variables>
         <events name="Reporting Frequency">
           <event>daily</event>
@@ -740,7 +745,7 @@ HarvIndex = 0</text>
           <CN2Bare>75</CN2Bare>
           <CNRed>20</CNRed>
           <CNCov>0.8</CNCov>
-          <KDul>1</KDul>
+          <KDul>0.1</KDul>
           <PSIDul>-100</PSIDul>
           <VC>true</VC>
           <DTmin>0</DTmin>
@@ -974,7 +979,7 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
             <double>0.496441652363301</double>
             <double>0.496</double>
             <double>0.366</double>
-            <double>0.097</double>
+            <double>0.2</double>
             <double>0.306</double>
             <double>0.306</double>
           </SWCON>
@@ -1175,8 +1180,6 @@ ReadyToSow = 0         </text>
   <GraphReport name="CropPerformance">
     <Graph name="Biomass">
       <Legend>
-        <CheckedTitles> Maize_SWIM3 ConvTill</CheckedTitles>
-        <CheckedTitles> Maize_SoilWat ConvTill</CheckedTitles>
       </Legend>
       <Plot>
         <SeriesType>Solid line</SeriesType>
@@ -1190,8 +1193,6 @@ ReadyToSow = 0         </text>
     </Graph>
     <Graph name="Yield">
       <Legend>
-        <CheckedTitles> Maize_SWIM3 ConvTill</CheckedTitles>
-        <CheckedTitles> Maize_SoilWat ConvTill</CheckedTitles>
       </Legend>
       <Plot>
         <SeriesType>Solid line</SeriesType>
@@ -1205,8 +1206,6 @@ ReadyToSow = 0         </text>
     </Graph>
     <Graph name="HI">
       <Legend>
-        <CheckedTitles> Maize_SWIM3 ConvTill</CheckedTitles>
-        <CheckedTitles> Maize_SoilWat ConvTill</CheckedTitles>
       </Legend>
       <Plot>
         <SeriesType>Solid line</SeriesType>
@@ -1350,6 +1349,10 @@ ReadyToSow = 0         </text>
   </GraphReport>
   <Graph name="XY">
     <Legend>
+      <CheckedTitles> surfaceom_n, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> surfaceom_n, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> fom_n(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> fom_n(), Maize_SoilWat ConvTill dailyTest</CheckedTitles>
     </Legend>
     <Plot>
       <SeriesType>Solid line</SeriesType>
@@ -1361,6 +1364,46 @@ ReadyToSow = 0         </text>
       <Y>fom_n()</Y>
       <Y>biom_n()</Y>
       <YRight>hum_n()</YRight>
+      <GDApsimFileReader name="ApsimFileReader" />
+    </Plot>
+  </Graph>
+  <Graph name="XY1">
+    <Legend>
+      <CheckedTitles> sw_dep(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> sw_dep(), Maize_SoilWat ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> sat_dep(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> dul_dep(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> ll15_dep(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+    </Legend>
+    <Plot>
+      <SeriesType>Solid line</SeriesType>
+      <PointType>None</PointType>
+      <colour>
+      </colour>
+      <X>Date</X>
+      <Y>sw_dep()</Y>
+      <Y>sat_dep()</Y>
+      <Y>dul_dep()</Y>
+      <Y>ll15_dep()</Y>
+      <GDApsimFileReader name="ApsimFileReader" />
+    </Plot>
+  </Graph>
+  <Graph name="XY2">
+    <Legend>
+      <CheckedTitles> Cumulative evaporation, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> Cumulative evaporation, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> Cumulative drain, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> Cumulative drain, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
+    </Legend>
+    <Plot>
+      <SeriesType>Solid line</SeriesType>
+      <PointType>None</PointType>
+      <colour>
+      </colour>
+      <X>Date</X>
+      <Y>rain</Y>
+      <Y>Cumulative evaporation</Y>
+      <Y>Cumulative drain</Y>
       <GDApsimFileReader name="ApsimFileReader" />
     </Plot>
   </Graph>
