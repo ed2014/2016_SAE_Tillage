@@ -21,7 +21,7 @@
       </surfaceom>
       <fertiliser />
       <folder name="Manager folder">
-        <operations name="SimpleSowRule" enabled="no">
+        <operations name="SimpleSowRule">
           <operation condition="start_of_day">
             <date>15-sep</date>
             <action>maize sow plants =10, sowing_depth = 50,  cultivar = 'long ' ,  row_spacing = 750,  crop_class = plant</action>
@@ -51,7 +51,7 @@
             </action>
           </operation>
         </operations>
-        <manager name="Harvesting rule" enabled="no">
+        <manager name="Harvesting rule">
           <ui>
             <category type="category" description="Harvesting criteria" />
             <crop type="crop" description="Enter name of crop to harvest when ripe : ">maize</crop>
@@ -68,7 +68,7 @@
             <event>end_of_day</event>
           </script>
         </manager>
-        <operations name="FertiliserSimpleRules" enabled="no">
+        <operations name="FertiliserSimpleRules">
           <operation condition="start_of_day">
             <date>15-sep</date>
             <action>fertiliser apply amount= 15 (kg/ha), type= urea_N (), depth= 10 (mm)</action>
@@ -118,7 +118,7 @@
           <default_cl_conc type="text" description="Chloride concentration (ppm Cl)">0.0</default_cl_conc>
         </irrigation>
       </folder>
-      <outputfile enabled="no">
+      <outputfile>
         <filename output="yes">Maize_SWIM3 ConvTill.out</filename>
         <title>Maize_SWIM3 ConvTill</title>
         <variables name="Variables">
@@ -618,7 +618,7 @@ HarvIndex = 0</text>
             <double>1.601</double>
           </BD>
           <AirDry>
-            <double>0.07675</double>
+            <double>0.06</double>
             <double>0.14</double>
             <double>0.201</double>
             <double>0.201</double>
@@ -1349,10 +1349,8 @@ ReadyToSow = 0         </text>
   </GraphReport>
   <Graph name="XY">
     <Legend>
-      <CheckedTitles> surfaceom_n, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-      <CheckedTitles> surfaceom_n, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
-      <CheckedTitles> fom_n(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-      <CheckedTitles> fom_n(), Maize_SoilWat ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> hum_n(), Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> hum_n(), Maize_SoilWat ConvTill dailyTest</CheckedTitles>
     </Legend>
     <Plot>
       <SeriesType>Solid line</SeriesType>
@@ -1390,6 +1388,8 @@ ReadyToSow = 0         </text>
   </Graph>
   <Graph name="XY2">
     <Legend>
+      <CheckedTitles> rain, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
+      <CheckedTitles> rain, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
       <CheckedTitles> Cumulative evaporation, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
       <CheckedTitles> Cumulative evaporation, Maize_SoilWat ConvTill dailyTest</CheckedTitles>
       <CheckedTitles> Cumulative drain, Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
