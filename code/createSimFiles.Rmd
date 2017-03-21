@@ -107,7 +107,6 @@ w_model <- c("Swim","soilWat")
           v1 <- sapply(nodesSAT, xmlValue)
           v2 <- as.numeric(unlist(strsplit(v1 ,split=" ")))
           v2[1:tillLayer] <- 0
-         # v4 <- paste0(as.character((v3)))
           
           x <- paste(v2, sep="", collapse=" ")
           str(x)
