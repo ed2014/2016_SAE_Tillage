@@ -1,0 +1,139 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Analysis of tillage effects undet climate change scenarios
+
+Edmar Teixeira, Wei Hu, Adrian Hunt, Paul Johstone and John de Ruiter
+
+# SAE 11.1 
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(XML)
+```
+
+# 1) Define ranges of "tillage" related parameters
+
+Wei Hu has suggested the following parameterisation for top layer:
+
+Conventional till:
+Bulk density: <bd>1.1</bd>
+Soil saturation: <sat>0.585</sat>
+Soil drained upper limit: <dul>0.32</dul>
+Hydraulic conductivity: <ks>2000</ks>
+
+No-till:
+Bulk density: <bd>1.4</bd>;
+Soil saturation: <sat>0.472</sat>;
+Soil drained upper limit: <dul>0.37</dul>;
+Hydraulic conductivity: <ks>500</ks>
+
+# 2) Sensitivity analysis 
+
+- Take min and max of proposed ranged
+- Split in 10 equally spaced values
+- Run the model for each parameter
+
+Note that they are dependent 
+
+Set ranges of parameters (Wei Hu)
+```{r}
+bd_r <- c(1.1,1.4)
+sat_r <- c(0.472,0.585)
+dul_r <- c(0.32,0.37)
+ks_r <- c(500,2000)
+
+# creates 10 equally speced parameters within range for top soil
+bd_p <- seq(from=bd_r[1], to=bd_r[2], length.out = 10)
+#sat_r <- seq(from=sat_r[1], to=sat_r[2], length.out = 10)
+sat_r <- 1-(bd_p/2.6) # SAT calculated from BD - need to be paired with BD values
+dul_r <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
+ks_r <- seq(from=ks_r[1], to=ks_r[2], length.out = 10) # full range to be tested in factorial
+```
+
+# Read baseline.sim files (bases for changing parameters) 
+
+```{r}
+
+swimSim <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\Maize_SWIM3.sim"
+soilWatSim <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\Maize_Soilwat.sim"
+  
+```
+
+# create multiple .sim files with altered parameter values
+
+```{r}
+w_model <- c("Swim","soilWat")
+
+# Define deepest layer to respond to tillage for each model
+    # Note: swim multiplies the original "Water node" layer structure in sub-layers
+    # i.e. same depth of layer corresponds to a different layer number
+tillLayer_swim <- 5
+tillLayer_soilWat <- 2
+
+# loop water model
+  for(m in 1:length(w_model)) {
+
+    # loop parameters' levels
+    for(p in 1:length(sat_r)) {
+    
+    
+  # read fresh base sim
+  baseSim_xml_swim <- xmlTreeParse(swimSim, useInternalNodes = TRUE)
+  baseSim_xml_soilWat <- xmlTreeParse(soilWatSim, useInternalNodes = TRUE) 
+    
+  
+  # define model
+  if(m==1) {
+    baseSim <- baseSim_xml_swim
+  } else {
+    baseSim <-baseSim_xml_soilWat
+  }
+  
+  # find and isolate parameter nodes
+          nodesMet <- getNodeSet(baseSim, "//filename") 
+          nodesOut <- getNodeSet(baseSim, "//outputfile")
+          nodesBD <- getNodeSet(baseSim, "//bd")
+          nodesSAT <- getNodeSet(baseSim, "//sat")
+          nodesDUL <- getNodeSet(baseSim, "//dul")
+          nodesKS <- getNodeSet(baseSim, "//ks")
+          
+          # get parameter values and 
+          v1 <- sapply(nodesSAT, xmlValue)
+          v2 <- as.numeric(unlist(strsplit(v1 ,split=" ")))
+          v2[1] <- 0
+         # v4 <- paste0(as.character((v3)))
+          
+          x <- paste(v2, sep="", collapse=" ")
+          str(x)
+          
+ # change values
+   lapply(nodesSAT, function(n) {
+     xmlValue(n) = x
+   })
+   
+          print(w_model[m])
+          print(nodesSAT)
+          
+  } # end loop water models
+  
+  
+} # end loop in parameter levels for sensitivity
+
+
+
+# <bd>1.311 1.311 1.311 1.311 1.311 1.439 1.524 1.631 1.633 1.601 1.601 1.601 </bd>
+# <sat>0.456 0.456 0.456 0.456 0.456 0.419 0.394 0.364 0.365 0.376 0.376 0.376 </sat>
+# <dul>0.374 0.374 0.374 0.374 0.374 0.349 0.332 0.337 0.333 0.325 0.325 0.325 </dul>
+# <ks>4832.039 4832.039 4832.039 4832.039 4832.039 2166.353 389.229 72.292 44.934 97.995 97.995 97.995 </ks>
+
+
+```
+
+
+
+
