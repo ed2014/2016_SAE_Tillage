@@ -72,8 +72,6 @@ w_model <- c("Swim","soilWat")
 # Define deepest layer to respond to tillage for each model
     # Note: swim multiplies the original "Water node" layer structure in sub-layers
     # i.e. same depth of layer corresponds to a different layer number
-tillLayer_swim <- 5
-tillLayer_soilWat <- 2
 
 # loop water model
   for(m in 1:length(w_model)) {
@@ -90,8 +88,11 @@ tillLayer_soilWat <- 2
   # define model
   if(m==1) {
     baseSim <- baseSim_xml_swim
+    tillLayer <- 5
+
   } else {
     baseSim <-baseSim_xml_soilWat
+    tillLayer <- 2
   }
   
   # find and isolate parameter nodes
@@ -105,7 +106,7 @@ tillLayer_soilWat <- 2
           # get parameter values and 
           v1 <- sapply(nodesSAT, xmlValue)
           v2 <- as.numeric(unlist(strsplit(v1 ,split=" ")))
-          v2[1] <- 0
+          v2[1:tillLayer] <- 0
          # v4 <- paste0(as.character((v3)))
           
           x <- paste(v2, sep="", collapse=" ")
