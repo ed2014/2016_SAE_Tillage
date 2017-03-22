@@ -49,24 +49,43 @@ ks_r <- c(500,2000)
 
 # creates 10 equally speced parameters within range for top soil
 bd_p <- seq(from=bd_r[1], to=bd_r[2], length.out = 10)
-#sat_r <- seq(from=sat_r[1], to=sat_r[2], length.out = 10)
-sat_r <- 1-(bd_p/2.6) # SAT calculated from BD - need to be paired with BD values
-dul_r <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
-ks_r <- seq(from=ks_r[1], to=ks_r[2], length.out = 10) # full range to be tested in factorial
+sat_p <- 1-(bd_p/2.6) # SAT calculated from BD - need to be paired with BD values
+dul_p <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
+ks_p <- seq(from=ks_r[1], to=ks_r[2], length.out = 10) # full range to be tested in factorial
+
+bd_p
+sat_p
+dul_p
+ks_p
+
 ```
 
 # Read baseline.sim files (bases for changing parameters) 
 
 ```{r}
+baseSimFolder <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\baseSim\\"
+simFolder <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\"
 
-swimSim <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\Maize_SWIM3.sim"
-soilWatSim <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\Maize_Soilwat.sim"
+swimSim <- paste0(baseSimFolder, "SWIM3_base.sim")
+soilWatSim <- paste0(baseSimFolder, "SoilWat_base.sim")
   
 ```
 
 # create multiple .sim files with altered parameter values
 
 ```{r}
+
+         # function to work vector format of XML node
+          
+          xmlFunc <- function(vecNode, vecPar, idx, tl) {
+          v1 <- sapply(vecNode, xmlValue)
+          v2 <- as.numeric(unlist(strsplit(v1, split=" ")))
+          v2[1:tl] <- round(vecPar[idx],3)
+          v3 <- paste(v2, sep="", collapse=" ")
+          return(v3)
+          }
+
+
 w_model <- c("Swim","soilWat")
 
 # Define deepest layer to respond to tillage for each model
@@ -75,54 +94,86 @@ w_model <- c("Swim","soilWat")
 
 # loop water model
   for(m in 1:length(w_model)) {
+    
+    mod <- w_model[m]
 
     # loop parameters' levels
-    for(p in 1:length(sat_r)) {
-    
-    
-  # read fresh base sim
-  baseSim_xml_swim <- xmlTreeParse(swimSim, useInternalNodes = TRUE)
-  baseSim_xml_soilWat <- xmlTreeParse(soilWatSim, useInternalNodes = TRUE) 
-    
-  
+    for(p in 1:length(sat_p)) {
+      
+      for(k in 1:length(ks_p)) { # special case of ks that can have any value
+        
   # define model
   if(m==1) {
-    baseSim <- baseSim_xml_swim
+    simXML <- xmlTreeParse(swimSim, useInternalNodes = TRUE)
     tillLayer <- 5
 
   } else {
-    baseSim <-baseSim_xml_soilWat
+    simXML <- xmlTreeParse(soilWatSim, useInternalNodes = TRUE) 
     tillLayer <- 2
   }
   
   # find and isolate parameter nodes
-          nodesMet <- getNodeSet(baseSim, "//filename") 
-          nodesOut <- getNodeSet(baseSim, "//outputfile")
-          nodesBD <- getNodeSet(baseSim, "//bd")
-          nodesSAT <- getNodeSet(baseSim, "//sat")
-          nodesDUL <- getNodeSet(baseSim, "//dul")
-          nodesKS <- getNodeSet(baseSim, "//ks")
+          nodesOut <- getNodeSet(simXML, "//outputfile")
+          nodesBD <- getNodeSet(simXML, "//bd")
+          nodesSAT <- getNodeSet(simXML, "//sat")
+          nodesDUL <- getNodeSet(simXML, "//dul")
+          nodesKS <- getNodeSet(simXML, "//ks")
+          
           
           # get parameter values and 
-          v1 <- sapply(nodesSAT, xmlValue)
-          v2 <- as.numeric(unlist(strsplit(v1 ,split=" ")))
-          v2[1:tillLayer] <- 0
+          # v1 <- sapply(nodesSAT, xmlValue)
+          # v2 <- as.numeric(unlist(strsplit(v1 ,split=" ")))
+          # v2[1:tillLayer] <- round(sat_r[p],3)
+          # 
+          # x <- paste(v2, sep="", collapse=" ")
+          # str(x)
           
-          x <- paste(v2, sep="", collapse=" ")
-          str(x)
-          
- # change values
-   lapply(nodesSAT, function(n) {
-     xmlValue(n) = x
+ # change parameter values in XML
+   lapply(nodesBD, function(n) {
+     xmlValue(n) = xmlFunc(nodesBD, bd_p, p, tillLayer)
+   })
+   
+    lapply(nodesSAT, function(n) {
+     xmlValue(n) = xmlFunc(nodesSAT, sat_p, p, tillLayer)
+   })
+    
+   lapply(nodesDUL, function(n) {
+     xmlValue(n) = xmlFunc(nodesDUL, dul_p, p, tillLayer)
+   })
+   
+   lapply(nodesKS, function(n) {
+     xmlValue(n) = xmlFunc(nodesKS, ks_p, k, tillLayer)
    })
    
           print(w_model[m])
           print(nodesSAT)
           
-  } # end loop water models
+
+  simName <- paste0("BD_",p,
+                    "_DUL_",p,
+                    "_SAT_",p,"_KS_",
+                    k) # note ks
   
   
-} # end loop in parameter levels for sensitivity
+  outName <- paste0(mod,"_",simName,".out") 
+  
+  # change outfile name
+            lapply(nodesOut, function(n) {
+              xmlValue(n) = outName
+            })
+          
+ # change attribute name of simulation 
+            simNameRoot <- xmlRoot(simXML)
+            xmlAttrs(simNameRoot) = c(name = paste0(mod,"_",simName))          
+            
+  # save XML
+  saveXML(simXML, file = paste0(simFolder,"\\",mod,"_",simName,".sim"), indent=TRUE)        
+          
+      } # end loop in ks parameters (factorial against all other parameters)
+          
+  } # end loop in parameter 10 levels for sensitivity BD/DUL/SAT 
+  
+} # end loop water models 
 
 
 
