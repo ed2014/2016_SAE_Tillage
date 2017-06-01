@@ -9,7 +9,7 @@ Edmar Teixeira, Wei Hu, Adrian Hunt, Paul Johstone and John de Ruiter
 
 # SAE 11.1 
 
-```{r}
+```{r, include=FALSE}
 library(dplyr)
 library(ggplot2)
 library(lubridate)
@@ -18,21 +18,7 @@ library(XML)
 
 # 1) Define ranges of "tillage" related parameters
 
-Wei Hu has suggested the following parameterisation for top layer:
-
-Conventional till:
-Bulk density: <bd>1.1</bd>
-Soil saturation: <sat>0.585</sat>
-Soil drained upper limit: <dul>0.32</dul>
-Hydraulic conductivity: <ks>2000</ks>
-
-No-till:
-Bulk density: <bd>1.4</bd>;
-Soil saturation: <sat>0.472</sat>;
-Soil drained upper limit: <dul>0.37</dul>;
-Hydraulic conductivity: <ks>500</ks>
-
-# 2) Sensitivity analysis 
+Wei Hu has suggested the parameterisation for top layer, I made it a bit wider.
 
 - Take min and max of proposed ranged
 - Split in 10 equally spaced values
@@ -42,38 +28,56 @@ Note that they are dependent
 
 Set ranges of parameters (Wei Hu)
 ```{r}
-bd_r <- c(1.1,1.4)
-sat_r <- c(0.472,0.585)
-dul_r <- c(0.32,0.37)
-ks_r <- c(500,2000)
+bd_r <- c(0.8,1.6) # bulk density (g/cm3)
+#sat_r <- c(0.472,0.585) # saturation (cm3/cm3) # Now calculated
+# dul_r <- c(0.32,0.37) # drained upper limit (cm3/cm3) # Now calculated
+ks_r <- c(1,70) # hydraulic conductivity (mm/day) # Narrow range
 
-# creates 10 equally speced parameters within range for top soil
+# creates 10 equally spaced parameters within range for top soil
 bd_p <- seq(from=bd_r[1], to=bd_r[2], length.out = 10)
-sat_p <- 1-(bd_p/2.6) # SAT calculated from BD - need to be paired with BD values
-dul_p <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
+sat_p <- 1-(bd_p/2.65) # SAT calculated from BD - need to be paired with BD values
+dul_p <- sat_p * seq(from=0.5, to=0.8, length.out = 10) # bit beyond Wei's tange of 0.6 to 0.7
+#dul_p <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
 ks_p <- seq(from=ks_r[1], to=ks_r[2], length.out = 10) # full range to be tested in factorial
 
-bd_p
-sat_p
-dul_p
-ks_p
+parValues <- data.frame(code=c(1:10),bd=bd_p,dul=dul_p,sat=sat_p, m=dul_p/sat_p)
+
+parValues
+
+# save for reporting
+write.csv(parValues,"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\ParamValues.csv")
+write.csv(data.frame(ks=c(1:10),ks_value=ks_p),"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\KsValues.csv")
 
 ```
 
-# Read baseline.sim files (bases for changing parameters) 
+2) Set range of Ks values
+
+- this will be used as factorial for all 10 param combinations above
 
 ```{r}
+print(ks_p)
+```
+
+# 4) Read baseline.sim files 
+
+- bases for changing parameters
+
+```{r, include=FALSE}
 baseSimFolder <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\baseSim\\"
 simFolder <- "C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\"
 
 swimSim <- paste0(baseSimFolder, "SWIM3_base.sim")
 soilWatSim <- paste0(baseSimFolder, "SoilWat_base.sim")
+
+
   
 ```
 
-# create multiple .sim files with altered parameter values
+# 5) create multiple .sim files 
 
-```{r}
+- with altered parameter values
+
+```{r, include=FALSE}
 
          # function to work vector format of XML node
           
