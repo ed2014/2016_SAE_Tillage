@@ -995,7 +995,7 @@ runoffSum = 0 </text>
         <category type="category" description="Climate Change Parameters" />
         <MaxtChange type="text" description="Change in maximum temperature (oC):">0</MaxtChange>
         <MintChange type="text" description="Change in minimum temperature (oC):">0</MintChange>
-        <RainChange type="text" description="Relative change in daily rainfall (%):">0</RainChange>
+        <RainChange type="text" description="Fractional multiplier of daily rainfall (0-1):">1</RainChange>
         <RadnChange type="text" description="Relative change in daily radiation (%):">0</RadnChange>
         <CO2 type="text" description="Atmospheric CO2 Concentration (ppm)">350</CO2>
       </ui>
@@ -1007,7 +1007,8 @@ runoffSum = 0 </text>
 if (date_within('[date1], [date2]') = 1) then
    maxt = maxt + [MaxtChange]
    mint = mint + [MintChange]
-   rain = rain + rain * [RainChange] / 100
+!   rain = rain + rain * [RainChange] / 100 ! Changed to fit the logic of producing sim files now is "fractional" multiplier of rainfall
+    rain = rain * [RainChange]
    radn = radn + radn * [RadnChange] / 100
    co2 = [CO2]
  endif
@@ -1265,7 +1266,7 @@ ReadyToSow = 0         </text>
     <Graph name="Biomass">
       <Legend>
         <CheckedTitles> SWIM3 ConvTill</CheckedTitles>
-        <CheckedTitles> SoilWat ConvTill</CheckedTitles>
+        <CheckedTitles> {Checkpoint} SWIM3 ConvTill</CheckedTitles>
       </Legend>
       <Plot>
         <SeriesType>Solid line</SeriesType>
@@ -2177,7 +2178,7 @@ runoffSum = 0 </text>
         <category type="category" description="Climate Change Parameters" />
         <MaxtChange type="text" description="Change in maximum temperature (oC):">0</MaxtChange>
         <MintChange type="text" description="Change in minimum temperature (oC):">0</MintChange>
-        <RainChange type="text" description="Relative change in daily rainfall (%):">0</RainChange>
+        <RainChange type="text" description="Fractional multiplier of daily rainfall (0-1):">1</RainChange>
         <RadnChange type="text" description="Relative change in daily radiation (%):">0</RadnChange>
         <CO2 type="text" description="Atmospheric CO2 Concentration (ppm)">350</CO2>
       </ui>
@@ -2189,7 +2190,8 @@ runoffSum = 0 </text>
 if (date_within('[date1], [date2]') = 1) then
    maxt = maxt + [MaxtChange]
    mint = mint + [MintChange]
-   rain = rain + rain * [RainChange] / 100
+!   rain = rain + rain * [RainChange] / 100 ! Changed to fit the logic of producing sim files now is "fractional" multiplier of rainfall
+    rain = rain * [RainChange]
    radn = radn + radn * [RadnChange] / 100
    co2 = [CO2]
  endif
@@ -2801,7 +2803,7 @@ runoffSum = 0 </text>
         <category type="category" description="Climate Change Parameters" />
         <MaxtChange type="text" description="Change in maximum temperature (oC):">0</MaxtChange>
         <MintChange type="text" description="Change in minimum temperature (oC):">0</MintChange>
-        <RainChange type="text" description="Relative change in daily rainfall (%):">0</RainChange>
+        <RainChange type="text" description="Fractional multiplier of daily rainfall (0-1):">1</RainChange>
         <RadnChange type="text" description="Relative change in daily radiation (%):">0</RadnChange>
         <CO2 type="text" description="Atmospheric CO2 Concentration (ppm)">350</CO2>
       </ui>
@@ -2813,7 +2815,8 @@ runoffSum = 0 </text>
 if (date_within('[date1], [date2]') = 1) then
    maxt = maxt + [MaxtChange]
    mint = mint + [MintChange]
-   rain = rain + rain * [RainChange] / 100
+!   rain = rain + rain * [RainChange] / 100 ! Changed to fit the logic of producing sim files now is "fractional" multiplier of rainfall
+    rain = rain * [RainChange]
    radn = radn + radn * [RadnChange] / 100
    co2 = [CO2]
  endif

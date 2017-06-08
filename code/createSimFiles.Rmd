@@ -33,6 +33,8 @@ bd_r <- c(0.8,1.6) # bulk density (g/cm3)
 # dul_r <- c(0.32,0.37) # drained upper limit (cm3/cm3) # Now calculated
 ks_r <- c(1,70) # hydraulic conductivity (mm/day) # Narrow range
 
+rain_r <- c(0.5,1.5) # range of rainfall as % of base scenario - Does not work with APSIM logic
+
 # creates 10 equally spaced parameters within range for top soil
 bd_p <- seq(from=bd_r[1], to=bd_r[2], length.out = 10)
 sat_p <- 1-(bd_p/2.65) # SAT calculated from BD - need to be paired with BD values
@@ -40,13 +42,18 @@ dul_p <- sat_p * seq(from=0.5, to=0.8, length.out = 10) # bit beyond Wei's tange
 #dul_p <- seq(from=dul_r[1], to=dul_r[2], length.out = 10) # FIXME: how to get DUL from BD and align with SAT?
 ks_p <- seq(from=ks_r[1], to=ks_r[2], length.out = 10) # full range to be tested in factorial
 
+rain_p <- seq(from=rain_r[1], to=rain_r[2], length.out = 5)
+
+#rain_p <- c(50, 75, 0, 125, 150) # % change to daily rainfall as in APSIM climate control
+
 parValues <- data.frame(code=c(1:10),bd=bd_p,dul=dul_p,sat=sat_p, m=dul_p/sat_p)
 
 parValues
 
 # save for reporting
 write.csv(parValues,"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\ParamValues.csv")
-write.csv(data.frame(ks=c(1:10),ks_value=ks_p),"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\KsValues.csv")
+write.csv(data.frame(thisKS=c(1:10),ks_value=ks_p),"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\KsValues.csv")
+write.csv(data.frame(thisRain=c(1:5),rainP_value=rain_p),"C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\RainPValues.csv")
 
 ```
 
@@ -106,6 +113,8 @@ w_model <- c("Swim","soilWat")
       
       for(k in 1:length(ks_p)) { # special case of ks that can have any value
         
+        for(r in 1:length(rain_p)) { 
+        
   # define model
   if(m==1) {
     simXML <- xmlTreeParse(swimSim, useInternalNodes = TRUE)
@@ -122,6 +131,7 @@ w_model <- c("Swim","soilWat")
           nodesSAT <- getNodeSet(simXML, "//sat")
           nodesDUL <- getNodeSet(simXML, "//dul")
           nodesKS <- getNodeSet(simXML, "//ks")
+          nodesRain <- getNodeSet(simXML, "//RainChange")
           
           
           # get parameter values and 
@@ -149,11 +159,16 @@ w_model <- c("Swim","soilWat")
      xmlValue(n) = xmlFunc(nodesKS, ks_p, k, tillLayer)
    })
    
+   lapply(nodesRain, function(n) {
+     xmlValue(n) = xmlFunc(nodesRain, rain_p, r, tillLayer)
+   })
+   
           print(w_model[m])
           print(nodesSAT)
           
 
-  simName <- paste0("BD_",p,
+  simName <- paste0("Rain_",r,
+                    "_BD_",p,
                     "_DUL_",p,
                     "_SAT_",p,"_KS_",
                     k) # note ks
@@ -171,7 +186,9 @@ w_model <- c("Swim","soilWat")
             xmlAttrs(simNameRoot) = c(name = paste0(mod,"_",simName))          
             
   # save XML
-  saveXML(simXML, file = paste0(simFolder,"\\",mod,"_",simName,".sim"), indent=TRUE)        
+  saveXML(simXML, file = paste0(simFolder,"\\",mod,"_",simName,".sim"), indent=TRUE)   
+  
+        } # end loop rainfall change scenarios
           
       } # end loop in ks parameters (factorial against all other parameters)
           
