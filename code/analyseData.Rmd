@@ -1,0 +1,264 @@
+---
+title: "R Notebook"
+output:
+  word_document: default
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(tidyr)
+```
+
+## Read and analyse CS 11.1 SAE
+
+```{r, include=F, echo = F}
+info_raw <- read.csv("C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\SummaryResults\\all_Data.csv")
+
+summary(info_raw)
+
+
+```
+
+# Check parameter values used in these runs
+
+- Estimates Plant Available Soil Water (PAWC) 
+- Assumes PAWC 20 cm top soil where parameters are changed
+
+```{r, echo=FALSE}
+pV <- read.csv("C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\ParamValues.csv")
+ks <- read.csv("C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\KsValues.csv")
+rainP <- read.csv("C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\RainPValues.csv")
+
+pV$PAWC <- (pV$dul - 0.154)*200 # Assumed lower limit top soil layer and 200 mm of top soil (where param changes are made)
+
+# tide up FIXME: do it at writing
+pV$X <- NULL
+ks$X <- NULL
+ks$ks_value <- as.factor(as.character(round(ks$ks_value, digits=0)))
+rainP$X <- NULL
+
+```
+
+## These are the  parameter sets
+
+```{r}
+head(pV,10)
+```
+
+
+
+## These are Ks values
+
+```{r}
+head(ks,10)
+```
+
+# Plant available soil water of each Param set
+
+This is what results from the most current combination of parameters in the 10 parameter sets from BD ranging from 0.8 to 1.6 g/cm3
+
+```{r, fig.width=6, fig.height=5, echo=FALSE, echo=FALSE}
+pV %>%
+  ggplot(aes(x=bd,y=PAWC)) +
+  geom_point()+
+  geom_line()+
+  ylab("Plant Available Water Content in top 20 cm (mm)") +
+  xlab("Bulk density (cm3/cm3)")
+```
+
+## Clean and check data
+
+```{r, echo=FALSE}
+
+temp1 <- info_raw %>%
+  dplyr::select(-X) %>%
+  filter(biomass>0) %>% # remove bad sims - FIXME: Swim not running with some params
+  filter(rainSum>0) %>% # remove bad sims
+  mutate(Date = dmy(Date)) %>%
+  mutate(year=year(Date)) %>%
+  tidyr::gather(Parameter, ParamSet, thisBD:thisSAT) %>%
+  mutate(Parameter = as.factor(Parameter))
+
+# get BD values
+bdV <- pV %>% dplyr::select(code,bd) %>% mutate(ParamSet=code, bd=round(bd,1)) %>% dplyr::select(-code)
+
+  
+temp2 <- merge(temp1, ks, by="thisKS")
+temp3 <- merge(temp2, bdV, by="ParamSet")
+info_work <- merge(temp3, rainP, by="thisRain")
+
+summary(info_work)
+
+
+```
+
+## Plot soil water
+
+- Soil moisture is mainly sensitive to parameter sets (BD/DUL/SAT) when ks is 1 mm/day
+- Low BD (Param set 1) has higher soil moisture than 
+- interannual variability is big
+- Ks >1 mm/day till 100 mm/day had almost no effect (10 panels going down)
+- 
+
+### Time series soil water
+
+```{r, fig.width=12, fig.height=10, echo=FALSE}
+info_work %>%
+#  filter(thisRain == 5) %>%
+ # filter(thisModel=="soilWat") %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value,bd) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(esw)) %>%
+  ggplot(aes(x=year, y=effect, colour=factor(bd))) +
+ # geom_line() + 
+  geom_point(alpha=0.5) +
+  facet_grid(ks_value~thisModel+rainP_value)
+```
+
+
+```{r, fig.width=12, fig.height=10, echo=FALSE}
+
+info_work %>%
+  #filter(thisRain == 1) %>%
+ # filter(thisModel=="soilWat") %>%
+#  mutate(thisKS = as.factor(paste0("Ks_0",thisKS))) %>%
+ # mutate(ParamSet = as.factor(paste0("ParamSet_",ParamSet))) %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value, bd) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(esw)) %>%
+  ggplot(aes(x=factor(rainP_value), y=effect)) +
+ # geom_line() + 
+ # geom_point(alpha=0.5) +
+  geom_jitter(position = position_dodge(width = 0.5), alpha=0.5, aes(colour=factor(bd))) +
+  geom_boxplot(alpha=0.5,width = 0.5) +
+  facet_grid(ks_value~thisModel) +
+  ylab(" Available soil water (mm3/mm3)")
+  
+```
+
+## Plot biomass
+
+- Now Parameter sets in soil water affect yield mostly at Ks = 1 mm/day
+- Interestingly, effect occurred more in "high yield" years
+- Note that SWIM "breaks" and does not run at high BD parameter combinations (ask Rogerio)
+
+```{r, fig.width=12, fig.height=10, echo=FALSE }
+
+
+info_work %>%
+  #filter(thisRain == 1) %>%
+ # filter(thisModel=="soilWat") %>%
+#  mutate(thisKS = as.factor(paste0("Ks_0",thisKS))) %>%
+ # mutate(ParamSet = as.factor(paste0("ParamSet_",ParamSet))) %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value, bd) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(biomass)) %>%
+  ggplot(aes(x=factor(rainP_value), y=effect)) +
+ # geom_line() + 
+ # geom_point(alpha=0.5) +
+  geom_jitter(position = position_dodge(width = 0.5), alpha=0.5, aes(colour=factor(bd))) +
+  geom_boxplot(alpha=0.5,width = 0.5) +
+  facet_grid(ks_value~thisModel) +
+  ylab(" Available soil water (mm3/mm3)")
+
+
+```
+
+## Biomass time-series
+
+```{r, fig.width=12, fig.height=10, echo=FALSE}
+info_work %>%
+#  filter(thisRain == 5) %>%
+ # filter(thisModel=="soilWat") %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value, bd) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(biomass)) %>%
+  ggplot(aes(x=year, y=effect, colour=factor(bd))) +
+ # geom_line() + 
+  geom_point(alpha=0.5) +
+  facet_grid(ks_value~thisModel+rainP_value)
+```
+
+
+
+## Compare the two soil water models
+
+```{r, fig.height=10, fig.width=10}
+info_work %>%
+  filter(thisRain == 5) %>%
+ # filter(thisModel=="soilWat") %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(biomass)) %>%
+  tidyr::spread(thisModel, effect) %>%
+  ggplot(aes(x=soilWat, y=Swim, colour=factor(ParamSet))) +
+  geom_point() +
+  geom_smooth(method='lm', fill='grey') +
+  facet_wrap(~thisKS, ncol=5) +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+## Compare rainfall scenarios
+
+
+```{r, fig.height=10, include=FALSE}
+info_work %>%
+  filter(thisRain >= 1) %>%
+ # filter(thisModel=="soilWat") %>%
+  group_by(year,thisRain, thisModel,Parameter,ParamSet,thisKS) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(biomass)) %>%
+  ggplot(aes(x=thisKS, y=effect, colour=factor(ParamSet))) +
+  geom_point() +
+  geom_smooth(method='lm', fill='grey') +
+  facet_grid(ParamSet~thisRain) +
+  geom_abline(intercept = 0, slope = 1)
+```
+
+
+## What's happened in 1988?
+
+- Check 1988 as there were differences this year
+- Note that SWIM stops at BD < 1.4
+
+```{r, fig.width=12, fig.height=10, echo=FALSE, warning=FALSE, include = FALSE}
+
+ info_work %>%
+  filter(Parameter=="thisBD") %>%
+  merge(pV, by.y="code", by.x="ParamSet") %>%
+#  filter(thisKS=="3") %>%
+  filter(year=="1988") %>%
+  dplyr::select(year,thisModel,Parameter,ParamSet,thisKS, bd.x,biomass, drainSum, runoffSum, esSum) %>%
+  tidyr::gather("OutVar","OutValue", biomass:esSum) %>%
+  ggplot(aes(x=bd.x, y=OutValue, colour=thisModel)) +
+  geom_point(size=2) +
+  geom_line(aes(linetype=as.factor(thisKS))) +
+  facet_wrap(~OutVar, scales= "free") +
+ # geom_smooth(aes(fill=thisModel)) +
+  xlab("Bulk density (g/cm3)")
+
+```
+
+## Why inter-annual variability in yield?
+
+- Check if rainfall is the main driver of biomass differences
+- Yep, it's a good part of the story it seems
+- We can further analyse later (e.g. radiation, temp, etc)
+
+```{r, echo=FALSE, fig.width=12}
+  info_work %>%
+#  filter(thisRain == 5) %>%
+  filter(Parameter=="thisBD") %>%
+  filter(ParamSet=="1") %>%
+#  filter(thisKS=="1") %>%
+  ggplot(aes(x=rainSum, y=biomass,colour=factor(ks_value))) +
+  geom_point() +
+  geom_smooth(method='lm', alpha=0.2) +
+  xlab(" Accumulated rainfall during crop growth (mm)") +
+  facet_grid(.~rainP_value)
+```
+
