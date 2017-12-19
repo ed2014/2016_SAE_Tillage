@@ -1,8 +1,8 @@
 <folder version="37" creator="Apsim 7.9-r4044" name="simulations">
   <memo>Testing SoilWat and SWIM for OLW-DS </memo>
-  <simulation name="SoilWat_HAS">
+  <simulation name="SoilWat">
     <summaryfile />
-    <area name="ConvTill">
+    <area name="SWT">
       <surfaceom name="SurfaceOrganicMatter">
         <PoolName type="text" description="Organic Matter pool name">wheat</PoolName>
         <type type="list" listvalues="bambatsi,barley,base_type,broccoli,camaldulensis,canola,centro,chickpea,chikenmanure_base,cm,cmA,cmB,constants,cotton,cowpea,danthonia,fababean,fieldpea,fym,gbean,globulus,goatmanure,grandis,grass,horsegram,inert,lablab,lentil,lucerne,lupin,maize,manB,manure,medic,millet,mucuna,nativepasture,navybean,oats,orobanche,peanut,pigeonpea,potato,rice,sorghum,soybean,stylo,sugar,sunflower,sweetcorn,sweetsorghum,tillage,tithonia,vetch,weed,wheat" description="Organic Matter type">wheat</type>
@@ -11,451 +11,9 @@
         <standing_fraction type="text" description="Fraction of residue standing">0</standing_fraction>
       </surfaceom>
       <fertiliser />
-      <maize />
-      <folder name="Manager folder">
-        <operations name="SimpleSowRule">
-          <operation condition="start_of_day">
-            <date>10-oct</date>
-            <action>maize sow plants =10, sowing_depth = 50,  cultivar = Pioneer_35P12_104' ,  row_spacing = 750,  crop_class = plant</action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-        </operations>
-        <manager name="Harvesting rule">
-          <ui>
-            <category type="category" description="Harvesting criteria" />
-            <crop type="crop" description="Enter name of crop to harvest when ripe : ">maize</crop>
-          </ui>
-          <script>
-            <text>
-
-           if [crop].StageName = 'harvest_ripe' or [crop].plant_status = 'dead' then
-              [crop]  harvest
-              [crop]  end_crop
-           endif
-
-            </text>
-            <event>end_of_day</event>
-          </script>
-        </manager>
-        <operations name="FertiliserSimpleRules">
-          <operation condition="start_of_day">
-            <date>10-oct</date>
-            <action>fertiliser apply amount= 40 (kg/ha), type= urea_N (), depth= 10 (mm)</action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>10-dec</date>
-            <action>fertiliser apply amount= 150 (kg/ha), type= urea_N (), depth= 10 (mm)</action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-          <operation condition="start_of_day">
-            <date>
-            </date>
-            <action>
-            </action>
-          </operation>
-        </operations>
-        <manager name="Tillage">
-          <ui>
-            <category type="category" description="When should tillage be performed" />
-            <modulename type="modulename" description="The module the event come from : ">maize</modulename>
-            <eventname type="text" description="On which event should tillage be done : ">sowing</eventname>
-            <category type="category" description="Tillage details" />
-            <surfaceommodule type="modulename" description="Module used to apply the tillage : ">SurfaceOrganicMatter</surfaceommodule>
-            <tillage_type type="list" listvalues="user_defined, chisel, disc, planter, burn, burn_90, graze, scarifier, rip, blade, tine" description="Tillage type : ">disc</tillage_type>
-            <tillage_depth type="text" description="User_defined depth of seedbed preparation (mm) : ">20</tillage_depth>
-            <tillage_f_incorp type="text" description="User_defined fraction of surface residues to incorporate (0-1): ">0.5</tillage_f_incorp>
-          </ui>
-          <script>
-            <text> '[surfaceommodule]' tillage type = [tillage_type], f_incorp = [tillage_f_incorp] (), tillage_depth = [tillage_depth]</text>
-            <event>sowing</event>
-          </script>
-        </manager>
-      </folder>
-      <manager name="ExtraVariables">
-        <script>
-          <text>leachSum = 0 kg N-no3/fa
-drainSum = 0 mm
-HarvIndex = 0
-tempSum = 0
-tempAv = 0
-rainSum = 0
-dayCount = 0
-eoSum=0 ! pot ET
-esSum=0 ! soil evap
-runoffSum = 0</text>
-          <event>init</event>
-        </script>
-        <script>
-          <text>dayCount = dayCount + 1
-leachSum = leachSum + flow_no3(4)
-drainSum = drainSum + drain
-tempSum = (tempSum + (mint + maxt)*0.5)
-tempAv = tempSum/dayCount
-rainSum = rain + rainSum 
-eoSum= eo + eoSum 
-esSum= es + esSum
-runoffSum = runoffSum + runoff
-
-if (biomass&gt;0) then
-HarvIndex = yield/biomass
-else
-HarvIndex = 0 
-endif</text>
-          <event>start_of_day</event>
-        </script>
-        <script>
-          <text>
-          </text>
-          <event>end_of_day</event>
-        </script>
-        <script>
-          <text>leachSum = 0
-drainSum = 0
-HarvIndex = 0
-dayCount = 0
-tempAv = 0
-rainSum = 0
-tempSum = 0
-eoSum= 0 
-esSum= 0
-runoffSum = 0 </text>
-          <event>sowing</event>
-        </script>
-      </manager>
-      <outputfile>
-        <filename output="yes">SoilWat_HAS ConvTill.out</filename>
-        <title>SoilWat_HAS ConvTill</title>
-        <variables name="Variables">
-          <variable>dd/mm/yyyy as Date</variable>
-          <variable>biomass</variable>
-          <variable>yield</variable>
-          <variable>grain_protein</variable>
-          <variable>grain_size</variable>
-          <variable>esw</variable>
-          <variable>sw</variable>
-          <variable>surfaceom_c</variable>
-          <variable>leachSum</variable>
-          <variable>no3()</variable>
-          <variable>drainSum</variable>
-          <variable>HarvIndex as HI</variable>
-          <variable>NfertTot </variable>
-          <variable>fertiliser</variable>
-          <variable>ReadyToSow</variable>
-          <variable>n_stress_expan</variable>
-          <variable>n_stress_grain</variable>
-          <variable>n_stress_pheno</variable>
-          <variable>n_stress_photo</variable>
-          <variable>n_stress_tiller</variable>
-          <variable>sw_stress_expan</variable>
-          <variable>sw_stress_pheno</variable>
-          <variable>sw_stress_photo</variable>
-          <variable>sw_stress_tiller</variable>
-          <variable>leaf_no_final</variable>
-        </variables>
-        <events name="Reporting Frequency">
-          <event>harvesting</event>
-        </events>
-      </outputfile>
-      <outputfile name="dailyTest">
-        <filename output="yes">SoilWat_HAS ConvTill dailyTest.out</filename>
-        <title>SoilWat_HAS ConvTill dailyTest</title>
-        <variables name="Variables">
-          <variable>dd/mm/yyyy as Date </variable>
-          <variable>ReadyToSow</variable>
-          <variable>SowByMoisture </variable>
-          <variable>SowByTemp</variable>
-          <variable>SWD_top </variable>
-          <variable>TempAvRun </variable>
-          <variable>n_stress_expan</variable>
-          <variable>n_stress_grain</variable>
-          <variable>n_stress_pheno</variable>
-          <variable>n_stress_photo</variable>
-          <variable>n_stress_tiller</variable>
-          <variable>sw_stress_expan</variable>
-          <variable>sw_stress_pheno</variable>
-          <variable>sw_stress_photo</variable>
-          <variable>sw_stress_tiller</variable>
-          <variable>fertiliser</variable>
-          <variable>irrigation</variable>
-          <variable>rain</variable>
-          <variable>es as evaporation</variable>
-          <variable>drain</variable>
-          <variable>sw_dep()</variable>
-          <variable>dnit() as denitrification</variable>
-          <variable>surfaceom_n</variable>
-          <variable>fom_n()</variable>
-          <variable>biom_n()</variable>
-          <variable>hum_n()</variable>
-          <variable>urea()</variable>
-          <variable>nh4()</variable>
-          <variable>no3()</variable>
-          <variable>sat_dep()</variable>
-          <variable>dul_dep()</variable>
-          <variable>ll15_dep()</variable>
-        </variables>
-        <events name="Reporting Frequency">
-          <event>daily</event>
-        </events>
-        <GraphReport name="SowingRules">
-          <Graph name="Temperature">
-            <Legend>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>TempAvRun</Y>
-              <YRight>SowByTemp</YRight>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="SoilMoisture">
-            <Legend>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>SWD_top</Y>
-              <YRight>SowByMoisture</YRight>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="TriggerSow">
-            <Legend>
-            </Legend>
-            <Plot>
-              <SeriesType>No line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>ReadyToSow</Y>
-              <Y>SowByMoisture</Y>
-              <Y>SowByTemp</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <GraphReport name="Stress">
-          <Graph name="N_stress_Leaf">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>None</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>n_stress_expan</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_RUE">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>n_stress_photo</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Grain">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>None</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>n_stress_grain</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Tiller">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>n_stress_tiller</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>sw_stress_expan</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Leaf">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>sw_stress_expan</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_RUE">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>sw_stress_photo</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Develop">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>sw_stress_pheno</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Tiller">
-            <Legend>
-              <CheckedTitles> Maize_SWIM3 ConvTill dailyTest</CheckedTitles>
-            </Legend>
-            <Plot>
-              <SeriesType>Solid line</SeriesType>
-              <PointType>Circle</PointType>
-              <colour>
-              </colour>
-              <X>Date</X>
-              <Y>sw_stress_tiller</Y>
-              <GDApsimFileReader name="ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <Graph name="XY">
-          <Legend>
-            <CheckedTitles> surfaceom_n</CheckedTitles>
-            <CheckedTitles> fom_n()</CheckedTitles>
-            <CheckedTitles> biom_n()</CheckedTitles>
-            <CheckedTitles> hum_n()</CheckedTitles>
-          </Legend>
-          <Plot>
-            <SeriesType>Solid line</SeriesType>
-            <PointType>None</PointType>
-            <colour>
-            </colour>
-            <X>Date</X>
-            <Y>surfaceom_n</Y>
-            <Y>fom_n()</Y>
-            <Y>biom_n()</Y>
-            <YRight>hum_n()</YRight>
-            <GDApsimFileReader name="ApsimFileReader" />
-          </Plot>
-        </Graph>
-      </outputfile>
-      <outputfile name="outSimple">
-        <filename output="yes">SoilWat_HAS ConvTill outSimple.out</filename>
-        <title>SoilWat_HAS ConvTill outSimple</title>
-        <variables name="Variables">
-          <variable>dd/mm/yyyy as Date</variable>
-          <variable>biomass</variable>
-          <variable>yield</variable>
-          <variable>HarvIndex as HI</variable>
-          <variable>leaf_no_final</variable>
-          <variable>surfaceom_c</variable>
-          <variable>leachSum</variable>
-          <variable>no3() as no3_tot</variable>
-          <variable>NfertTot </variable>
-          <variable>fertiliser</variable>
-          <variable>irrigation</variable>
-          <variable>tempAv </variable>
-          <variable>rainSum </variable>
-          <variable>dayCount</variable>
-          <variable>esSum</variable>
-          <variable>eoSum</variable>
-          <variable>esw</variable>
-          <variable>sw() as SoilWater</variable>
-          <variable>drainSum</variable>
-          <variable>runoffSum</variable>
-        </variables>
-        <events name="Reporting Frequency">
-          <event>harvesting</event>
-        </events>
-      </outputfile>
-      <Soil name="Hastings_29a1">
+      <Soil name="Ruataniwha_13a1">
         <RecordNumber>-1</RecordNumber>
-        <SoilType>m</SoilType>
+        <SoilType>Duric Perch-gley Pallic Soils</SoilType>
         <Latitude>-41</Latitude>
         <Longitude>174</Longitude>
         <YearOfSampling>0</YearOfSampling>
@@ -464,92 +22,114 @@ Profile descriptions provided by Smap based on the work done by Trevor Webb.
 </DataSource>
         <LayerStructure>
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
+            <double>150</double>
+            <double>150</double>
+            <double>150</double>
+            <double>75</double>
+            <double>368.79999999999995</double>
+            <double>368.80000000000007</double>
+            <double>368.79999999999984</double>
+            <double>368.80000000000024</double>
           </Thickness>
         </LayerStructure>
         <Water>
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
+            <double>150</double>
+            <double>150</double>
+            <double>150</double>
+            <double>75</double>
+            <double>368.79999999999995</double>
+            <double>368.80000000000007</double>
+            <double>368.79999999999984</double>
+            <double>368.80000000000024</double>
           </Thickness>
           <BD>
-            <double>0.94115999999999989</double>
-            <double>1.18151</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
+            <double>1.31175</double>
+            <double>1.50785</double>
+            <double>1.4734</double>
+            <double>2.385</double>
+            <double>1.4734</double>
+            <double>1.4734</double>
+            <double>1.4734</double>
+            <double>1.4734</double>
           </BD>
           <AirDry>
-            <double>0.0825</double>
-            <double>0.1368</double>
-            <double>0.049</double>
-            <double>0.049</double>
-            <double>0.049</double>
-            <double>0.049</double>
+            <double>0.083499999999999991</double>
+            <double>0.0935</double>
+            <double>0.122</double>
+            <double>0.1</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
           </AirDry>
           <LL15>
-            <double>0.165</double>
-            <double>0.171</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
+            <double>0.16699999999999998</double>
+            <double>0.187</double>
+            <double>0.12200000000000001</double>
+            <double>0.1</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
           </LL15>
           <DUL>
-            <double>0.484</double>
-            <double>0.42700000000000005</double>
-            <double>0.174</double>
-            <double>0.174</double>
-            <double>0.174</double>
-            <double>0.174</double>
+            <double>0.353</double>
+            <double>0.35200000000000004</double>
+            <double>0.266</double>
+            <double>0.1</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000002</double>
           </DUL>
           <SAT>
-            <double>0.58404</double>
-            <double>0.49569</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
+            <double>0.46965</double>
+            <double>0.40083000000000008</double>
+            <double>0.41292</double>
+            <double>0.101</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
           </SAT>
           <KS>
             <double>1440</double>
+            <double>1920</double>
             <double>960</double>
-            <double>1920</double>
-            <double>1920</double>
-            <double>1920</double>
-            <double>1920</double>
+            <double>0.24</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
           </KS>
           <SoilCrop name="Ryegrass_Clover">
             <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
+              <double>150</double>
+              <double>150</double>
+              <double>150</double>
+              <double>75</double>
+              <double>368.79999999999995</double>
+              <double>368.80000000000007</double>
+              <double>368.79999999999984</double>
+              <double>368.80000000000024</double>
             </Thickness>
             <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
+              <double>0.16699999999999998</double>
+              <double>0.187</double>
+              <double>0.12200000000000001</double>
+              <double>0.1</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
             </LL>
             <KL>
               <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.010122756153096728</double>
+              <double>0.175</double>
+              <double>0.095644222743265991</double>
+              <double>0.0016232623367917485</double>
+              <double>0.0085743071074226383</double>
               <double>0</double>
               <double>0</double>
               <double>0</double>
@@ -558,77 +138,11 @@ Profile descriptions provided by Smap based on the work done by Trevor Webb.
               <double>1</double>
               <double>1</double>
               <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="maize">
-            <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="wheat">
-            <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
+              <double>0.017738816818724773</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
             </XF>
           </SoilCrop>
         </Water>
@@ -639,106 +153,121 @@ Profile descriptions provided by Smap based on the work done by Trevor Webb.
           <EnrACoeff>7.4</EnrACoeff>
           <EnrBCoeff>0.2</EnrBCoeff>
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>75.0</double>
+            <double>368.8</double>
+            <double>368.8</double>
+            <double>368.8</double>
+            <double>368.8</double>
           </Thickness>
           <OC>
             <double>2.6</double>
-            <double>0.684551643187173</double>
-            <double>0.21617107279780512</double>
-            <double>0.20098336394955149</double>
-            <double>0.20005979842335561</double>
-            <double>0.20000363634586915</double>
+            <double>1.5171479266256633</double>
+            <double>0.5967173317318077</double>
+            <double>0.3612932305753994</double>
+            <double>0.22733106633890654</double>
+            <double>0.20142992788987005</double>
+            <double>0.20007481207446773</double>
+            <double>0.20000391407603546</double>
           </OC>
           <FBiom>
-            <double>0.039632728827268718</double>
-            <double>0.014898257130119276</double>
-            <double>0.01038246407722174</double>
-            <double>0.010046835184831647</double>
-            <double>0.010005735269451052</double>
-            <double>0.010000702320612044</double>
+            <double>0.03550512606487093</double>
+            <double>0.02036961042583566</double>
+            <double>0.014215968982474573</double>
+            <double>0.012146587676509207</double>
+            <double>0.010566929372850965</double>
+            <double>0.010062018624375918</double>
+            <double>0.01000678446020558</double>
+            <double>0.01000074217867204</double>
           </FBiom>
           <FInert>
-            <double>0.26839822003870084</double>
-            <double>0.702552913255518</double>
-            <double>0.9168840725563524</double>
-            <double>0.970914599435084</double>
-            <double>0.98982192039431693</double>
-            <double>0.996438305732513</double>
+            <double>0.32126121405452945</double>
+            <double>0.5672170424835832</double>
+            <double>0.7240454027454027</double>
+            <double>0.8030920521996445</double>
+            <double>0.8988063154286764</double>
+            <double>0.9665304406543793</double>
+            <double>0.9889300265373727</double>
+            <double>0.9963386338255061</double>
           </FInert>
-          <OCUnits>Total</OCUnits>
         </SoilOrganicMatter>
         <Analysis>
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>1400</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>75.0</double>
+            <double>1475.0</double>
           </Thickness>
           <Rocks>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>60.0</double>
           </Rocks>
-          <Texture>
-            <string />
-            <string />
-            <string />
-          </Texture>
-          <MunsellColour>
-            <string />
-            <string />
-            <string />
-          </MunsellColour>
           <PH>
-            <double>7</double>
-            <double>7</double>
-            <double>7</double>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
           </PH>
           <CEC>
             <double>16.014000000000003</double>
-            <double>11.70424119717114</double>
-            <double>1.7205456127699204</double>
+            <double>13.577582834907743</double>
+            <double>6.422613996396568</double>
+            <double>5.89290976879465</double>
+            <double>5.530736500203004</double>
           </CEC>
           <ParticleSizeSand>
-            <double>8</double>
-            <double>8</double>
-            <double>90</double>
+            <double>8.0</double>
+            <double>8.0</double>
+            <double>60.0</double>
+            <double>60.0</double>
+            <double>60.0</double>
           </ParticleSizeSand>
           <ParticleSizeSilt>
-            <double>72</double>
-            <double>72</double>
-            <double>7</double>
+            <double>72.0</double>
+            <double>72.0</double>
+            <double>28.0</double>
+            <double>28.0</double>
+            <double>28.0</double>
           </ParticleSizeSilt>
           <ParticleSizeClay>
-            <double>20</double>
-            <double>20</double>
-            <double>3</double>
+            <double>20.0</double>
+            <double>20.0</double>
+            <double>12.0</double>
+            <double>12.0</double>
+            <double>12.0</double>
           </ParticleSizeClay>
-          <PHUnits>Water</PHUnits>
-          <BoronUnits>HotWater</BoronUnits>
         </Analysis>
         <Sample name="Initial nitrogen">
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>75.0</double>
+            <double>368.8</double>
+            <double>368.8</double>
+            <double>368.8</double>
+            <double>368.8</double>
           </Thickness>
           <NO3>
-            <double>13.3</double>
-            <double>53.433333333333337</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
+            <double>19.95</double>
+            <double>19.95</double>
+            <double>19.95</double>
+            <double>6.708333333333334</double>
+            <double>0.8605333333333334</double>
+            <double>0.8605333333333334</double>
+            <double>0.8605333333333334</double>
+            <double>0.8605333333333334</double>
           </NO3>
           <NH4>
+            <double>0.1</double>
+            <double>0.1</double>
             <double>0.1</double>
             <double>0.1</double>
             <double>0.1</double>
@@ -775,29 +304,113 @@ Profile descriptions provided by Smap based on the work done by Trevor Webb.
           <CatchmentArea>NaN</CatchmentArea>
           <MaxPond>30</MaxPond>
           <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>1400</double>
+            <double>150</double>
+            <double>150</double>
+            <double>150</double>
+            <double>75</double>
+            <double>1475</double>
           </Thickness>
           <SWCON>
             <double>0.3</double>
             <double>0.3</double>
-            <double>0.45</double>
+            <double>0.3</double>
+            <double>0.05</double>
+            <double>0.2</double>
           </SWCON>
           <KLAT>
+            <double>0</double>
+            <double>0</double>
             <double>0</double>
             <double>0</double>
             <double>0</double>
           </KLAT>
         </SoilWater>
       </Soil>
+      <outputfile>
+        <filename output="yes">SoilWat SWT.out</filename>
+        <title>SoilWat SWT</title>
+        <variables name="Variables">
+          <variable>dd/mm/yyyy as Date</variable>
+          <variable>sw</variable>
+          <variable>pond</variable>
+        </variables>
+        <events name="Reporting Frequency">
+          <event>daily</event>
+        </events>
+      </outputfile>
+      <manager name="ClimateControl">
+        <ui>
+          <category type="category" description="Climate Control Window" />
+          <date1 type="ddmmmdate" description="Enter window START date (dd-mmm) : ">1-jan</date1>
+          <date2 type="ddmmmdate" description="Enter window END date (dd-mmm) : ">31-dec</date2>
+          <category type="category" description="Climate Change Parameters" />
+          <MaxtChange type="text" description="Change in maximum temperature (oC):">1</MaxtChange>
+          <MintChange type="text" description="Change in minimum temperature (oC):">1</MintChange>
+          <RainChange type="text" description="Relative change in daily rainfall (%):">-10</RainChange>
+          <RadnChange type="text" description="Relative change in daily radiation (%):">-100</RadnChange>
+          <CO2 type="text" description="Atmospheric CO2 Concentration (ppm)">350</CO2>
+        </ui>
+        <script>
+          <text>
+!  Adjust daily temperatures, rainfall and radiation up or down according to user-defined amounts
+! To apply different levels of climate control to different times of year add multiple copies of this logic into your simulation and change the window.
+
+if (date_within('[date1], [date2]') = 1) then
+   maxt = 5
+   mint = 2
+   rain = 0
+   radn = 0
+   co2 = [CO2]
+ endif
+            </text>
+          <event>prenewmet</event>
+        </script>
+        <script>
+          <text>co2 = [CO2]
+tav = tav + ([MaxtChange] + [MintChange]) / 2
+            </text>
+          <event>Init</event>
+        </script>
+      </manager>
+      <irrigation name="Irrigation">
+        <automatic_irrigation type="list" listvalues="on,off" description="Automatic irrigation">on</automatic_irrigation>
+        <asw_depth type="text" description="Depth to which ASW is calculated. (mm)">600</asw_depth>
+        <crit_fr_asw type="text" description="Fraction of ASW below which irrigation is applied (0-1.0)">0.5</crit_fr_asw>
+        <irrigation_efficiency type="text" description="Efficiency of the irrigation. (0-1.0)">1</irrigation_efficiency>
+        <irrigation_allocation type="list" listvalues="on,off" description="Allocation limits">off</irrigation_allocation>
+        <allocation type="text" description="Allocation in mm">0</allocation>
+        <default_no3_conc type="text" description="Nitrate concentration (ppm N)">0.0</default_no3_conc>
+        <default_nh4_conc type="text" description="Ammonium concentration (ppm N)">0.0</default_nh4_conc>
+        <default_cl_conc type="text" description="Chloride concentration (ppm Cl)">0.0</default_cl_conc>
+      </irrigation>
+      <manager name="Irrigate">
+        <ui>
+          <category type="category" description="Sowing criteria" />
+          <date type="text" description="Enter sowing date (dd-mmm) : ">1-oct</date>
+          <category type="category" description="Sowing parameters" />
+          <crop type="crop" description="Enter name of crop to sow : ">wheat</crop>
+          <density type="text" description="Enter sowing density  (plants/m2) : ">10</density>
+          <depth type="text" description="Enter sowing depth  (mm) : ">50</depth>
+          <cultivar type="cultivars" description="Enter cultivar : " />
+          <class type="classes" description="Enter crop growth class : ">plant</class>
+          <row_spacing type="text" description="Enter row spacing (mm) : ">500</row_spacing>
+        </ui>
+        <script>
+          <text>
+        if (today = date('[date]') then
+               irrigation apply amount = 100
+         endif
+    </text>
+          <event>start_of_day</event>
+        </script>
+      </manager>
     </area>
     <metfile name="met">
       <filename name="filename" input="yes">C:\GitHubRepos\2016_SAE_Tillage_ClimateChange\weather\HawkesBay_VCSN_agent_28460_rean1970.met</filename>
     </metfile>
     <clock>
       <start_date type="date" description="Enter the start date of the simulation">01/09/1982</start_date>
-      <end_date type="date" description="Enter the end date of the simulation">31/12/1985</end_date>
+      <end_date type="date" description="Enter the end date of the simulation">29/08/1983</end_date>
     </clock>
     <manager name="ClimateControl">
       <ui>
@@ -834,742 +447,147 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
         <event>Init</event>
       </script>
     </manager>
+    <GraphReport>
+      <Graph name="L_01">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(1)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_02">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(2)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_03">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(3)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_04">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(4)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_05">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(5)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_06">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(6)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_07">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(7)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_08">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>sw(8)</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
+    </GraphReport>
+    <Graph name="pond">
+      <Legend>
+        <CheckedTitles> SoilWat_HAS ConvTill</CheckedTitles>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>Circle</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>pond</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
   </simulation>
-  <simulation name="SoilWat_OA" shortcut="/simulations/SoilWat_HAS">
-    <summaryfile shortcut="/simulations/SoilWat_HAS/summaryfile" />
-    <area name="ConvTill" shortcut="/simulations/SoilWat_HAS/ConvTill">
-      <surfaceom name="SurfaceOrganicMatter" shortcut="/simulations/SoilWat_HAS/ConvTill/SurfaceOrganicMatter" />
-      <fertiliser shortcut="/simulations/SoilWat_HAS/ConvTill/fertiliser" />
-      <maize shortcut="/simulations/SoilWat_HAS/ConvTill/maize" />
-      <folder name="Manager folder" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder">
-        <operations name="SimpleSowRule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/SimpleSowRule" />
-        <manager name="Harvesting rule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Harvesting rule" />
-        <operations name="FertiliserSimpleRules" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/FertiliserSimpleRules" />
-        <manager name="Tillage" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Tillage" />
-      </folder>
-      <manager name="ExtraVariables" shortcut="/simulations/SoilWat_HAS/ConvTill/ExtraVariables" />
-      <outputfile shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile">
-        <filename output="yes">SoilWat_OA ConvTill.out</filename>
-        <title>SoilWat_OA ConvTill</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Reporting Frequency" />
-      </outputfile>
-      <outputfile name="dailyTest" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest">
-        <filename output="yes">SoilWat_OA ConvTill dailyTest.out</filename>
-        <title>SoilWat_OA ConvTill dailyTest</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Reporting Frequency" />
-        <GraphReport name="SowingRules" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules">
-          <Graph name="Temperature" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="SoilMoisture" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="TriggerSow" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <GraphReport name="Stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress">
-          <Graph name="N_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Grain" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Develop" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <Graph name="XY" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY">
-          <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot">
-            <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot/ApsimFileReader" />
-          </Plot>
-        </Graph>
-      </outputfile>
-      <outputfile name="outSimple" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple">
-        <filename output="yes">SoilWat_OA ConvTill outSimple.out</filename>
-        <title>SoilWat_OA ConvTill outSimple</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Reporting Frequency" />
-      </outputfile>
-      <Soil name="Oaklea_9a1">
-        <RecordNumber>-1</RecordNumber>
-        <SoilType>m</SoilType>
-        <Latitude>-41</Latitude>
-        <Longitude>174</Longitude>
-        <YearOfSampling>0</YearOfSampling>
-        <DataSource>
-Profile descriptions provided by Smap based on the work done by Trevor Webb.
-</DataSource>
-        <LayerStructure>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-        </LayerStructure>
-        <Water>
-          <Thickness>
-            <double>150</double>
-            <double>325</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-          </Thickness>
-          <BD>
-            <double>1.378</double>
-            <double>1.55025</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-          </BD>
-          <AirDry>
-            <double>0.07585</double>
-            <double>0.098076923076923075</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-          </AirDry>
-          <LL15>
-            <double>0.1517</double>
-            <double>0.1275</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-          </LL15>
-          <DUL>
-            <double>0.328375</double>
-            <double>0.24450000000000002</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-          </DUL>
-          <SAT>
-            <double>0.41292000000000012</double>
-            <double>0.2894625</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-          </SAT>
-          <KS>
-            <double>1440</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-          </KS>
-          <SoilCrop name="Ryegrass_Clover">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.1517</double>
-              <double>0.1275</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.13916152294928291</double>
-              <double>0.0210233829923723</double>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="maize">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0.02</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="wheat">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-        </Water>
-        <SoilOrganicMatter>
-          <RootCN>40</RootCN>
-          <RootWt>1000</RootWt>
-          <SoilCN>11</SoilCN>
-          <EnrACoeff>7.4</EnrACoeff>
-          <EnrBCoeff>0.2</EnrBCoeff>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-          <OC>
-            <double>2.6</double>
-            <double>0.8540763032816303</double>
-            <double>0.2526267221462279</double>
-            <double>0.20458698991191834</double>
-            <double>0.20039980594637033</double>
-            <double>0.20003484742670521</double>
-            <double>0.2000030373313829</double>
-          </OC>
-          <FBiom>
-            <double>0.03550512606487093</double>
-            <double>0.01613419867379714</double>
-            <double>0.0109267044894122</double>
-            <double>0.01014865597341988</double>
-            <double>0.010023846435067374</double>
-            <double>0.010003825291727877</double>
-            <double>0.010000613628693849</double>
-          </FBiom>
-          <FInert>
-            <double>0.32126121405452945</double>
-            <double>0.6671352173247209</double>
-            <double>0.8706222591014672</double>
-            <double>0.9481820637240675</double>
-            <double>0.9792460549917745</double>
-            <double>0.9916876999672312</double>
-            <double>0.9966707856358208</double>
-          </FInert>
-        </SoilOrganicMatter>
-        <Analysis>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>1525.0</double>
-          </Thickness>
-          <Rocks>
-            <double>7.5</double>
-            <double>25.0</double>
-            <double>75.0</double>
-          </Rocks>
-          <PH>
-            <double>7.0</double>
-            <double>7.0</double>
-            <double>7.0</double>
-          </PH>
-          <CEC>
-            <double>16.213</double>
-            <double>12.284671682383667</double>
-            <double>10.713399563379333</double>
-          </CEC>
-          <ParticleSizeSand>
-            <double>11.0</double>
-            <double>11.0</double>
-            <double>12.5</double>
-          </ParticleSizeSand>
-          <ParticleSizeSilt>
-            <double>67.0</double>
-            <double>67.0</double>
-            <double>65.5</double>
-          </ParticleSizeSilt>
-          <ParticleSizeClay>
-            <double>22.0</double>
-            <double>22.0</double>
-            <double>22.0</double>
-          </ParticleSizeClay>
-        </Analysis>
-        <Sample name="Initial nitrogen">
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-          <NO3>
-            <double>19.95</double>
-            <double>43.225</double>
-            <double>3.9783333333333335</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-          </NO3>
-          <NH4>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-          </NH4>
-          <NO3Units>kgha</NO3Units>
-          <NH4Units>kgha</NH4Units>
-          <SWUnits>Volumetric</SWUnits>
-          <OCUnits>Total</OCUnits>
-          <PHUnits>Water</PHUnits>
-        </Sample>
-        <InitialWater name="Initial water">
-          <FractionFull>1</FractionFull>
-          <PercentMethod>FilledFromTop</PercentMethod>
-        </InitialWater>
-        <SoilWater>
-          <SummerCona>4.4</SummerCona>
-          <SummerU>9</SummerU>
-          <SummerDate>1-oct</SummerDate>
-          <WinterCona>4.4</WinterCona>
-          <WinterU>9</WinterU>
-          <WinterDate>1-apr</WinterDate>
-          <DiffusConst>88</DiffusConst>
-          <DiffusSlope>35</DiffusSlope>
-          <Salb>0.13</Salb>
-          <CN2Bare>73</CN2Bare>
-          <CNRed>20</CNRed>
-          <CNCov>0.8</CNCov>
-          <Slope>NaN</Slope>
-          <DischargeWidth>NaN</DischargeWidth>
-          <CatchmentArea>NaN</CatchmentArea>
-          <MaxPond>30</MaxPond>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>1525.0</double>
-          </Thickness>
-          <SWCON>
-            <double>0.3</double>
-            <double>0.35</double>
-            <double>0.3</double>
-          </SWCON>
-          <KLAT>
-            <double>0.0</double>
-            <double>0.0</double>
-            <double>0.0</double>
-          </KLAT>
-        </SoilWater>
-      </Soil>
-    </area>
-    <metfile name="met" shortcut="/simulations/SoilWat_HAS/met" />
-    <clock shortcut="/simulations/SoilWat_HAS/clock" />
-    <manager name="ClimateControl" shortcut="/simulations/SoilWat_HAS/ClimateControl" />
-  </simulation>
-  <simulation name="SWIM3_HAS" shortcut="/simulations/SoilWat_HAS">
-    <summaryfile shortcut="/simulations/SoilWat_HAS/summaryfile" />
-    <area name="ConvTill" shortcut="/simulations/SoilWat_HAS/ConvTill">
-      <surfaceom name="SurfaceOrganicMatter" shortcut="/simulations/SoilWat_HAS/ConvTill/SurfaceOrganicMatter" />
-      <fertiliser shortcut="/simulations/SoilWat_HAS/ConvTill/fertiliser" />
-      <maize shortcut="/simulations/SoilWat_HAS/ConvTill/maize" />
-      <folder name="Manager folder" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder">
-        <operations name="SimpleSowRule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/SimpleSowRule" />
-        <manager name="Harvesting rule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Harvesting rule" />
-        <operations name="FertiliserSimpleRules" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/FertiliserSimpleRules" />
-        <manager name="Tillage" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Tillage" />
-      </folder>
-      <manager name="ExtraVariables" shortcut="/simulations/SoilWat_HAS/ConvTill/ExtraVariables" />
-      <outputfile shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile">
-        <filename output="yes">SWIM3_HAS ConvTill.out</filename>
-        <title>SWIM3_HAS ConvTill</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Reporting Frequency" />
-      </outputfile>
-      <outputfile name="dailyTest" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest">
-        <filename output="yes">SWIM3_HAS ConvTill dailyTest.out</filename>
-        <title>SWIM3_HAS ConvTill dailyTest</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Reporting Frequency" />
-        <GraphReport name="SowingRules" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules">
-          <Graph name="Temperature" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="SoilMoisture" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="TriggerSow" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <GraphReport name="Stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress">
-          <Graph name="N_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Grain" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Develop" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <Graph name="XY" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY">
-          <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot">
-            <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot/ApsimFileReader" />
-          </Plot>
-        </Graph>
-      </outputfile>
-      <outputfile name="outSimple" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple">
-        <filename output="yes">SWIM3_HAS ConvTill outSimple.out</filename>
-        <title>SWIM3_HAS ConvTill outSimple</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Reporting Frequency" />
-      </outputfile>
-      <Soil name="Hastings_29a1">
-        <RecordNumber>-1</RecordNumber>
-        <SoilType>m</SoilType>
-        <Latitude>-41</Latitude>
-        <Longitude>174</Longitude>
-        <YearOfSampling>0</YearOfSampling>
-        <DataSource>
-Profile descriptions provided by Smap based on the work done by Trevor Webb.
-</DataSource>
-        <LayerStructure>
-          <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-          </Thickness>
-        </LayerStructure>
-        <Water>
-          <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-          </Thickness>
-          <BD>
-            <double>0.94115999999999989</double>
-            <double>1.18151</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
-            <double>1.6491999999999998</double>
-          </BD>
-          <AirDry>
-            <double>0.0825</double>
-            <double>0.1368</double>
-            <double>0.049</double>
-            <double>0.049</double>
-            <double>0.049</double>
-            <double>0.049</double>
-          </AirDry>
-          <LL15>
-            <double>0.165</double>
-            <double>0.171</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
-            <double>0.049000000000000009</double>
-          </LL15>
-          <DUL>
-            <double>0.484</double>
-            <double>0.42700000000000005</double>
-            <double>0.174</double>
-            <double>0.174</double>
-            <double>0.174</double>
-            <double>0.174</double>
-          </DUL>
-          <SAT>
-            <double>0.58404</double>
-            <double>0.49569</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
-            <double>0.38223000000000007</double>
-          </SAT>
-          <KS>
-            <double>1440</double>
-            <double>960</double>
-            <double>1920</double>
-            <double>1920</double>
-            <double>1920</double>
-            <double>1920</double>
-          </KS>
-          <SoilCrop name="Ryegrass_Clover">
-            <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.010122756153096728</double>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="maize">
-            <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="wheat">
-            <Thickness>
-              <double>100</double>
-              <double>500</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-              <double>350</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-        </Water>
+  <simulation name="Swim" shortcut="/simulations/SoilWat">
+    <summaryfile shortcut="/simulations/SoilWat/summaryfile" />
+    <area name="SWM" shortcut="/simulations/SoilWat/SWT">
+      <surfaceom name="SurfaceOrganicMatter" shortcut="/simulations/SoilWat/SWT/SurfaceOrganicMatter" />
+      <fertiliser shortcut="/simulations/SoilWat/SWT/fertiliser" />
+      <Soil name="Ruataniwha_13a1" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1">
+        <LayerStructure shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/LayerStructure" />
+        <Water shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Water" />
+        <SoilOrganicMatter shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/SoilOrganicMatter" />
+        <Analysis shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Analysis" />
+        <Sample name="Initial nitrogen" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Initial nitrogen" />
+        <InitialWater name="Initial water" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Initial water" />
         <Swim>
           <Salb>0.13</Salb>
           <CN2Bare>75</CN2Bare>
@@ -1602,678 +620,101 @@ Profile descriptions provided by Smap based on the work done by Trevor Webb.
             <Thickness>
               <double>1000</double>
               <double>1000</double>
-              <double>1000</double>
             </Thickness>
             <NO3Exco>
-              <double>0</double>
               <double>0</double>
               <double>0</double>
             </NO3Exco>
             <NO3FIP>
               <double>1</double>
               <double>1</double>
-              <double>1</double>
             </NO3FIP>
             <NH4Exco>
-              <double>100</double>
               <double>100</double>
               <double>100</double>
             </NH4Exco>
             <NH4FIP>
               <double>1</double>
               <double>1</double>
-              <double>1</double>
             </NH4FIP>
             <UreaExco>
-              <double>0</double>
               <double>0</double>
               <double>0</double>
             </UreaExco>
             <UreaFIP>
               <double>1</double>
               <double>1</double>
-              <double>1</double>
             </UreaFIP>
             <ClExco>
-              <double>0</double>
               <double>0</double>
               <double>0</double>
             </ClExco>
             <ClFIP>
               <double>1</double>
               <double>1</double>
-              <double>1</double>
             </ClFIP>
           </SwimSoluteParameters>
         </Swim>
-        <SoilOrganicMatter>
-          <RootCN>40</RootCN>
-          <RootWt>1000</RootWt>
-          <SoilCN>11</SoilCN>
-          <EnrACoeff>7.4</EnrACoeff>
-          <EnrBCoeff>0.2</EnrBCoeff>
-          <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-          </Thickness>
-          <OC>
-            <double>2.6</double>
-            <double>0.684551643187173</double>
-            <double>0.21617107279780512</double>
-            <double>0.20098336394955149</double>
-            <double>0.20005979842335561</double>
-            <double>0.20000363634586915</double>
-          </OC>
-          <FBiom>
-            <double>0.039632728827268718</double>
-            <double>0.014898257130119276</double>
-            <double>0.01038246407722174</double>
-            <double>0.010046835184831647</double>
-            <double>0.010005735269451052</double>
-            <double>0.010000702320612044</double>
-          </FBiom>
-          <FInert>
-            <double>0.26839822003870084</double>
-            <double>0.702552913255518</double>
-            <double>0.9168840725563524</double>
-            <double>0.970914599435084</double>
-            <double>0.98982192039431693</double>
-            <double>0.996438305732513</double>
-          </FInert>
-          <OCUnits>Total</OCUnits>
-        </SoilOrganicMatter>
-        <Analysis>
-          <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>1400</double>
-          </Thickness>
-          <Rocks>
-            <double>0</double>
-            <double>0</double>
-            <double>0</double>
-          </Rocks>
-          <Texture>
-            <string />
-            <string />
-            <string />
-          </Texture>
-          <MunsellColour>
-            <string />
-            <string />
-            <string />
-          </MunsellColour>
-          <PH>
-            <double>7</double>
-            <double>7</double>
-            <double>7</double>
-          </PH>
-          <CEC>
-            <double>16.014000000000003</double>
-            <double>11.70424119717114</double>
-            <double>1.7205456127699204</double>
-          </CEC>
-          <ParticleSizeSand>
-            <double>8</double>
-            <double>8</double>
-            <double>90</double>
-          </ParticleSizeSand>
-          <ParticleSizeSilt>
-            <double>72</double>
-            <double>72</double>
-            <double>7</double>
-          </ParticleSizeSilt>
-          <ParticleSizeClay>
-            <double>20</double>
-            <double>20</double>
-            <double>3</double>
-          </ParticleSizeClay>
-          <PHUnits>Water</PHUnits>
-          <BoronUnits>HotWater</BoronUnits>
-        </Analysis>
-        <Sample name="Initial nitrogen">
-          <Thickness>
-            <double>100</double>
-            <double>500</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-            <double>350</double>
-          </Thickness>
-          <NO3>
-            <double>13.3</double>
-            <double>53.433333333333337</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
-            <double>0.81666666666666665</double>
-          </NO3>
-          <NH4>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-          </NH4>
-          <NO3Units>kgha</NO3Units>
-          <NH4Units>kgha</NH4Units>
-          <SWUnits>Volumetric</SWUnits>
-          <OCUnits>Total</OCUnits>
-          <PHUnits>Water</PHUnits>
-        </Sample>
-        <InitialWater name="Initial water">
-          <FractionFull>1</FractionFull>
-          <DepthWetSoil>NaN</DepthWetSoil>
-          <PercentMethod>FilledFromTop</PercentMethod>
-        </InitialWater>
       </Soil>
+      <outputfile shortcut="/simulations/SoilWat/SWT/outputfile">
+        <filename output="yes">Swim SWM.out</filename>
+        <title>Swim SWM</title>
+        <variables name="Variables" shortcut="/simulations/SoilWat/SWT/outputfile/Variables" />
+        <events name="Reporting Frequency" shortcut="/simulations/SoilWat/SWT/outputfile/Reporting Frequency" />
+      </outputfile>
+      <manager name="ClimateControl" shortcut="/simulations/SoilWat/SWT/ClimateControl" />
+      <irrigation name="Irrigation" shortcut="/simulations/SoilWat/SWT/Irrigation" />
+      <manager name="Irrigate" shortcut="/simulations/SoilWat/SWT/Irrigate" />
     </area>
-    <metfile name="met" shortcut="/simulations/SoilWat_HAS/met" />
-    <clock shortcut="/simulations/SoilWat_HAS/clock" />
-    <manager name="ClimateControl" shortcut="/simulations/SoilWat_HAS/ClimateControl" />
-  </simulation>
-  <simulation name="SWIM3_OA" shortcut="/simulations/SoilWat_HAS">
-    <summaryfile shortcut="/simulations/SoilWat_HAS/summaryfile" />
-    <area name="ConvTill" shortcut="/simulations/SoilWat_HAS/ConvTill">
-      <surfaceom name="SurfaceOrganicMatter" shortcut="/simulations/SoilWat_HAS/ConvTill/SurfaceOrganicMatter" />
-      <fertiliser shortcut="/simulations/SoilWat_HAS/ConvTill/fertiliser" />
-      <maize shortcut="/simulations/SoilWat_HAS/ConvTill/maize" />
-      <folder name="Manager folder" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder">
-        <operations name="SimpleSowRule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/SimpleSowRule" />
-        <manager name="Harvesting rule" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Harvesting rule" />
-        <operations name="FertiliserSimpleRules" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/FertiliserSimpleRules" />
-        <manager name="Tillage" shortcut="/simulations/SoilWat_HAS/ConvTill/Manager folder/Tillage" />
-      </folder>
-      <manager name="ExtraVariables" shortcut="/simulations/SoilWat_HAS/ConvTill/ExtraVariables" />
-      <outputfile shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile">
-        <filename output="yes">SWIM3_OA ConvTill.out</filename>
-        <title>SWIM3_OA ConvTill</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outputfile/Reporting Frequency" />
-      </outputfile>
-      <outputfile name="dailyTest" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest">
-        <filename output="yes">SWIM3_OA ConvTill dailyTest.out</filename>
-        <title>SWIM3_OA ConvTill dailyTest</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Reporting Frequency" />
-        <GraphReport name="SowingRules" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules">
-          <Graph name="Temperature" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/Temperature/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="SoilMoisture" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/SoilMoisture/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="TriggerSow" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/SowingRules/TriggerSow/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <GraphReport name="Stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress">
-          <Graph name="N_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Grain" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Grain/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="N_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/N_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Leaf" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Leaf/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_RUE" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_RUE/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Develop" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Develop/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-          <Graph name="W_stress_Tiller" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller">
-            <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot">
-              <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/Stress/W_stress_Tiller/Plot/ApsimFileReader" />
-            </Plot>
-          </Graph>
-        </GraphReport>
-        <Graph name="XY" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY">
-          <Plot shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot">
-            <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat_HAS/ConvTill/dailyTest/XY/Plot/ApsimFileReader" />
-          </Plot>
-        </Graph>
-      </outputfile>
-      <outputfile name="outSimple" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple">
-        <filename output="yes">SWIM3_OA ConvTill outSimple.out</filename>
-        <title>SWIM3_OA ConvTill outSimple</title>
-        <variables name="Variables" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Variables" />
-        <events name="Reporting Frequency" shortcut="/simulations/SoilWat_HAS/ConvTill/outSimple/Reporting Frequency" />
-      </outputfile>
-      <Soil name="Oaklea_9a1">
-        <RecordNumber>-1</RecordNumber>
-        <SoilType>m</SoilType>
-        <Latitude>-41</Latitude>
-        <Longitude>174</Longitude>
-        <YearOfSampling>0</YearOfSampling>
-        <DataSource>
-Profile descriptions provided by Smap based on the work done by Trevor Webb.
-</DataSource>
-        <LayerStructure>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-        </LayerStructure>
-        <Water>
-          <Thickness>
-            <double>150</double>
-            <double>325</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-            <double>305</double>
-          </Thickness>
-          <BD>
-            <double>1.378</double>
-            <double>1.55025</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-            <double>1.5529000000000002</double>
-          </BD>
-          <AirDry>
-            <double>0.07585</double>
-            <double>0.098076923076923075</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-          </AirDry>
-          <LL15>
-            <double>0.1517</double>
-            <double>0.1275</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-            <double>0.042</double>
-          </LL15>
-          <DUL>
-            <double>0.328375</double>
-            <double>0.24450000000000002</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-            <double>0.080749999999999988</double>
-          </DUL>
-          <SAT>
-            <double>0.41292000000000012</double>
-            <double>0.2894625</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-            <double>0.096255000000000007</double>
-          </SAT>
-          <KS>
-            <double>1440</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-            <double>960</double>
-          </KS>
-          <SoilCrop name="Ryegrass_Clover">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.1517</double>
-              <double>0.1275</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-              <double>0.042</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.13916152294928291</double>
-              <double>0.0210233829923723</double>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-              <double>0.82530686849168244</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="maize">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0.02</double>
-              <double>0</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-          <SoilCrop name="wheat">
-            <Thickness>
-              <double>150</double>
-              <double>325</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-              <double>305</double>
-            </Thickness>
-            <LL>
-              <double>0.165</double>
-              <double>0.171</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049000000000000009</double>
-              <double>0.049</double>
-            </LL>
-            <KL>
-              <double>0.15</double>
-              <double>0.11112273310225768</double>
-              <double>0.07</double>
-              <double>0.03</double>
-              <double>0.02</double>
-              <double>0</double>
-              <double>1</double>
-            </KL>
-            <XF>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </XF>
-          </SoilCrop>
-        </Water>
-        <Swim>
-          <Salb>0.13</Salb>
-          <CN2Bare>75</CN2Bare>
-          <CNRed>20</CNRed>
-          <CNCov>0.8</CNCov>
-          <KDul>0.1</KDul>
-          <PSIDul>-100</PSIDul>
-          <VC>true</VC>
-          <DTmin>0</DTmin>
-          <DTmax>1440</DTmax>
-          <MaxWaterIncrement>10</MaxWaterIncrement>
-          <SpaceWeightingFactor>0</SpaceWeightingFactor>
-          <SoluteSpaceWeightingFactor>0</SoluteSpaceWeightingFactor>
-          <Diagnostics>false</Diagnostics>
-          <SwimSoluteParameters>
-            <Dis>15</Dis>
-            <Disp>1</Disp>
-            <A>1</A>
-            <DTHC>0</DTHC>
-            <DTHP>1</DTHP>
-            <WaterTableCl>0</WaterTableCl>
-            <WaterTableNO3>0</WaterTableNO3>
-            <WaterTableNH4>0</WaterTableNH4>
-            <WaterTableUrea>0</WaterTableUrea>
-            <WaterTableTracer>0</WaterTableTracer>
-            <WaterTableMineralisationInhibitor>0</WaterTableMineralisationInhibitor>
-            <WaterTableUreaseInhibitor>0</WaterTableUreaseInhibitor>
-            <WaterTableNitrificationInhibitor>0</WaterTableNitrificationInhibitor>
-            <WaterTableDenitrificationInhibitor>0</WaterTableDenitrificationInhibitor>
-            <Thickness>
-              <double>1000</double>
-              <double>1000</double>
-              <double>1000</double>
-            </Thickness>
-            <NO3Exco>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </NO3Exco>
-            <NO3FIP>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </NO3FIP>
-            <NH4Exco>
-              <double>100</double>
-              <double>100</double>
-              <double>100</double>
-            </NH4Exco>
-            <NH4FIP>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </NH4FIP>
-            <UreaExco>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </UreaExco>
-            <UreaFIP>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </UreaFIP>
-            <ClExco>
-              <double>0</double>
-              <double>0</double>
-              <double>0</double>
-            </ClExco>
-            <ClFIP>
-              <double>1</double>
-              <double>1</double>
-              <double>1</double>
-            </ClFIP>
-          </SwimSoluteParameters>
-        </Swim>
-        <SoilOrganicMatter>
-          <RootCN>40</RootCN>
-          <RootWt>1000</RootWt>
-          <SoilCN>11</SoilCN>
-          <EnrACoeff>7.4</EnrACoeff>
-          <EnrBCoeff>0.2</EnrBCoeff>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-          <OC>
-            <double>2.6</double>
-            <double>0.8540763032816303</double>
-            <double>0.2526267221462279</double>
-            <double>0.20458698991191834</double>
-            <double>0.20039980594637033</double>
-            <double>0.20003484742670521</double>
-            <double>0.2000030373313829</double>
-          </OC>
-          <FBiom>
-            <double>0.03550512606487093</double>
-            <double>0.01613419867379714</double>
-            <double>0.0109267044894122</double>
-            <double>0.01014865597341988</double>
-            <double>0.010023846435067374</double>
-            <double>0.010003825291727877</double>
-            <double>0.010000613628693849</double>
-          </FBiom>
-          <FInert>
-            <double>0.32126121405452945</double>
-            <double>0.6671352173247209</double>
-            <double>0.8706222591014672</double>
-            <double>0.9481820637240675</double>
-            <double>0.9792460549917745</double>
-            <double>0.9916876999672312</double>
-            <double>0.9966707856358208</double>
-          </FInert>
-        </SoilOrganicMatter>
-        <Analysis>
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>1525.0</double>
-          </Thickness>
-          <Rocks>
-            <double>7.5</double>
-            <double>25.0</double>
-            <double>75.0</double>
-          </Rocks>
-          <PH>
-            <double>7.0</double>
-            <double>7.0</double>
-            <double>7.0</double>
-          </PH>
-          <CEC>
-            <double>16.213</double>
-            <double>12.284671682383667</double>
-            <double>10.713399563379333</double>
-          </CEC>
-          <ParticleSizeSand>
-            <double>11.0</double>
-            <double>11.0</double>
-            <double>12.5</double>
-          </ParticleSizeSand>
-          <ParticleSizeSilt>
-            <double>67.0</double>
-            <double>67.0</double>
-            <double>65.5</double>
-          </ParticleSizeSilt>
-          <ParticleSizeClay>
-            <double>22.0</double>
-            <double>22.0</double>
-            <double>22.0</double>
-          </ParticleSizeClay>
-        </Analysis>
-        <Sample name="Initial nitrogen">
-          <Thickness>
-            <double>150.0</double>
-            <double>325.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-            <double>305.0</double>
-          </Thickness>
-          <NO3>
-            <double>19.95</double>
-            <double>43.225</double>
-            <double>3.9783333333333335</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-            <double>0.7116666666666667</double>
-          </NO3>
-          <NH4>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-            <double>0.1</double>
-          </NH4>
-          <NO3Units>kgha</NO3Units>
-          <NH4Units>kgha</NH4Units>
-          <SWUnits>Volumetric</SWUnits>
-          <OCUnits>Total</OCUnits>
-          <PHUnits>Water</PHUnits>
-        </Sample>
-        <InitialWater name="Initial water">
-          <FractionFull>1</FractionFull>
-          <PercentMethod>FilledFromTop</PercentMethod>
-        </InitialWater>
-      </Soil>
-    </area>
-    <metfile name="met" shortcut="/simulations/SoilWat_HAS/met" />
-    <clock shortcut="/simulations/SoilWat_HAS/clock" />
-    <manager name="ClimateControl" shortcut="/simulations/SoilWat_HAS/ClimateControl" />
+    <metfile name="met" shortcut="/simulations/SoilWat/met" />
+    <clock shortcut="/simulations/SoilWat/clock" />
+    <manager name="ClimateControl" shortcut="/simulations/SoilWat/ClimateControl" />
+    <GraphReport shortcut="/simulations/SoilWat/GraphReport">
+      <Graph name="L_01" shortcut="/simulations/SoilWat/GraphReport/L_01">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_01/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_01/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_02" shortcut="/simulations/SoilWat/GraphReport/L_02">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_02/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_02/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_03" shortcut="/simulations/SoilWat/GraphReport/L_03">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_03/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_03/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_04" shortcut="/simulations/SoilWat/GraphReport/L_04">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_04/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_04/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_05" shortcut="/simulations/SoilWat/GraphReport/L_05">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_05/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_05/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_06" shortcut="/simulations/SoilWat/GraphReport/L_06">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_06/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_06/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_07" shortcut="/simulations/SoilWat/GraphReport/L_07">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_07/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_07/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+      <Graph name="L_08" shortcut="/simulations/SoilWat/GraphReport/L_08">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/L_08/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_08/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
+    </GraphReport>
+    <Graph name="pond" shortcut="/simulations/SoilWat/pond">
+      <Plot shortcut="/simulations/SoilWat/pond/Plot">
+        <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/pond/Plot/ApsimFileReader" />
+      </Plot>
+    </Graph>
   </simulation>
 </folder>
