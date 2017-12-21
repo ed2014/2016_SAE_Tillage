@@ -406,7 +406,7 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
       </manager>
     </area>
     <metfile name="met">
-      <filename name="filename" input="yes">C:\GitHubRepos\2016_SAE_Tillage_ClimateChange\weather\HawkesBay_VCSN_agent_28460_rean1970.met</filename>
+      <filename name="filename" input="yes">C:\GitHubRepos\2016_SAE_Tillage_ClimateChange\weather\HawkesBay_VCSN_agent_28460_rean_PM.met</filename>
     </metfile>
     <clock>
       <start_date type="date" description="Enter the start date of the simulation">01/09/1982</start_date>
@@ -560,34 +560,587 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
           <GDApsimFileReader name="ApsimFileReader" />
         </Plot>
       </Graph>
+      <Graph name="pond">
+        <Legend>
+          <CheckedTitles> SoilWat SWT</CheckedTitles>
+        </Legend>
+        <Plot>
+          <SeriesType>Solid line</SeriesType>
+          <PointType>None</PointType>
+          <colour>
+          </colour>
+          <X>Date</X>
+          <Y>pond</Y>
+          <GDApsimFileReader name="ApsimFileReader" />
+        </Plot>
+      </Graph>
     </GraphReport>
-    <Graph name="pond">
-      <Legend>
-        <CheckedTitles> SoilWat_HAS ConvTill</CheckedTitles>
-      </Legend>
-      <Plot>
-        <SeriesType>Solid line</SeriesType>
-        <PointType>Circle</PointType>
-        <colour>
-        </colour>
-        <X>Date</X>
-        <Y>pond</Y>
-        <GDApsimFileReader name="ApsimFileReader" />
-      </Plot>
-    </Graph>
   </simulation>
   <simulation name="Swim" shortcut="/simulations/SoilWat">
     <summaryfile shortcut="/simulations/SoilWat/summaryfile" />
     <area name="SWM" shortcut="/simulations/SoilWat/SWT">
       <surfaceom name="SurfaceOrganicMatter" shortcut="/simulations/SoilWat/SWT/SurfaceOrganicMatter" />
       <fertiliser shortcut="/simulations/SoilWat/SWT/fertiliser" />
-      <Soil name="Ruataniwha_13a1" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1">
-        <LayerStructure shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/LayerStructure" />
-        <Water shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Water" />
-        <SoilOrganicMatter shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/SoilOrganicMatter" />
-        <Analysis shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Analysis" />
-        <Sample name="Initial nitrogen" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Initial nitrogen" />
-        <InitialWater name="Initial water" shortcut="/simulations/SoilWat/SWT/Ruataniwha_13a1/Initial water" />
+      <Soil name="Ruataniwha_13a1">
+        <RecordNumber>-1</RecordNumber>
+        <SoilType>Duric Perch-gley Pallic Soils</SoilType>
+        <Latitude>-41</Latitude>
+        <Longitude>174</Longitude>
+        <YearOfSampling>0</YearOfSampling>
+        <DataSource>
+Profile descriptions provided by Smap based on the work done by Trevor Webb.
+</DataSource>
+        <LayerStructure>
+          <Thickness>
+            <double>10</double>
+            <double>20</double>
+            <double>30</double>
+            <double>40</double>
+            <double>50</double>
+            <double>130</double>
+            <double>40</double>
+            <double>130</double>
+            <double>75</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000013</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999984</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000027</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.11999999999989</double>
+            <double>50</double>
+            <double>20</double>
+          </Thickness>
+        </LayerStructure>
+        <Water>
+          <Thickness>
+            <double>10</double>
+            <double>20</double>
+            <double>30</double>
+            <double>40</double>
+            <double>50</double>
+            <double>130</double>
+            <double>40</double>
+            <double>130</double>
+            <double>75</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000013</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999984</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000027</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.11999999999989</double>
+            <double>50</double>
+            <double>20</double>
+          </Thickness>
+          <BD>
+            <double>1.31175</double>
+            <double>1.31175</double>
+            <double>1.31175</double>
+            <double>1.31175</double>
+            <double>1.3117500000000002</double>
+            <double>1.50785</double>
+            <double>1.490625</double>
+            <double>1.4734</double>
+            <double>2.385</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+            <double>2.17936</double>
+          </BD>
+          <AirDry>
+            <double>0.083499999999999991</double>
+            <double>0.083499999999999991</double>
+            <double>0.083499999999999991</double>
+            <double>0.083499999999999991</double>
+            <double>0.083499999999999991</double>
+            <double>0.0935</double>
+            <double>0.115875</double>
+            <double>0.122</double>
+            <double>0.1</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+          </AirDry>
+          <LL15>
+            <double>0.16699999999999998</double>
+            <double>0.16699999999999998</double>
+            <double>0.16699999999999998</double>
+            <double>0.16699999999999998</double>
+            <double>0.16699999999999998</double>
+            <double>0.187</double>
+            <double>0.1545</double>
+            <double>0.122</double>
+            <double>0.1</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+            <double>0.048799999999999996</double>
+          </LL15>
+          <DUL>
+            <double>0.353</double>
+            <double>0.353</double>
+            <double>0.353</double>
+            <double>0.353</double>
+            <double>0.353</double>
+            <double>0.35200000000000004</double>
+            <double>0.30900000000000005</double>
+            <double>0.266</double>
+            <double>0.1</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+            <double>0.10640000000000001</double>
+          </DUL>
+          <SAT>
+            <double>0.46965</double>
+            <double>0.46965</double>
+            <double>0.46965000000000007</double>
+            <double>0.46965</double>
+            <double>0.46965</double>
+            <double>0.40083000000000008</double>
+            <double>0.40687500000000004</double>
+            <double>0.41292</double>
+            <double>0.093000000000000013</double>
+            <double>0.16516800000000006</double>
+            <double>0.16516800000000006</double>
+            <double>0.16516800000000006</double>
+            <double>0.16516800000000006</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+            <double>0.16516800000000004</double>
+          </SAT>
+          <KS>
+            <double>1440</double>
+            <double>1440</double>
+            <double>1440</double>
+            <double>1440</double>
+            <double>1440</double>
+            <double>1920</double>
+            <double>1440</double>
+            <double>960</double>
+            <double>0.24</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+            <double>48</double>
+          </KS>
+          <SoilCrop name="Ryegrass_Clover">
+            <Thickness>
+              <double>10</double>
+              <double>20</double>
+              <double>30</double>
+              <double>40</double>
+              <double>50</double>
+              <double>130</double>
+              <double>40</double>
+              <double>130</double>
+              <double>75</double>
+              <double>117.07999999999998</double>
+              <double>117.07999999999998</double>
+              <double>117.07999999999998</double>
+              <double>117.07999999999998</double>
+              <double>117.08000000000013</double>
+              <double>117.07999999999998</double>
+              <double>117.07999999999984</double>
+              <double>117.07999999999998</double>
+              <double>117.08000000000027</double>
+              <double>117.07999999999998</double>
+              <double>117.07999999999998</double>
+              <double>117.11999999999989</double>
+              <double>50</double>
+              <double>20</double>
+            </Thickness>
+            <LL>
+              <double>0.16699999999999998</double>
+              <double>0.16699999999999998</double>
+              <double>0.16699999999999998</double>
+              <double>0.16699999999999998</double>
+              <double>0.16699999999999998</double>
+              <double>0.187</double>
+              <double>0.1545</double>
+              <double>0.122</double>
+              <double>0.1</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+              <double>0.048799999999999996</double>
+            </LL>
+            <KL>
+              <double>0.15</double>
+              <double>0.15</double>
+              <double>0.15</double>
+              <double>0.15</double>
+              <double>0.15</double>
+              <double>0.175</double>
+              <double>0.175</double>
+              <double>0.090074336821839879</double>
+              <double>0.0016232623367917485</double>
+              <double>0.018245713687196911</double>
+              <double>0.0090381109421219016</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+              <double>0</double>
+            </KL>
+            <XF>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>1</double>
+              <double>0.017738816818724773</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+              <double>0.51068618336618787</double>
+            </XF>
+          </SoilCrop>
+        </Water>
+        <SoilOrganicMatter>
+          <RootCN>40</RootCN>
+          <RootWt>1000</RootWt>
+          <SoilCN>11</SoilCN>
+          <EnrACoeff>7.4</EnrACoeff>
+          <EnrBCoeff>0.2</EnrBCoeff>
+          <Thickness>
+            <double>10</double>
+            <double>20</double>
+            <double>30</double>
+            <double>40</double>
+            <double>50</double>
+            <double>130</double>
+            <double>40</double>
+            <double>130</double>
+            <double>75</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000013</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999984</double>
+            <double>117.07999999999998</double>
+            <double>117.08000000000027</double>
+            <double>117.07999999999998</double>
+            <double>117.07999999999998</double>
+            <double>117.11999999999989</double>
+            <double>50</double>
+            <double>20</double>
+          </Thickness>
+          <OC>
+            <double>2.6</double>
+            <double>2.6</double>
+            <double>2.6</double>
+            <double>2.6</double>
+            <double>2.6</double>
+            <double>1.6268493151284664</double>
+            <double>0.92286610858928508</double>
+            <double>0.5662162538165213</double>
+            <double>0.36129323057539942</double>
+            <double>0.27480644290286332</double>
+            <double>0.22931982816529517</double>
+            <double>0.21149168828624429</double>
+            <double>0.20450408163798578</double>
+            <double>0.20176534125328863</double>
+            <double>0.20069191235662334</double>
+            <double>0.20027118989507339</double>
+            <double>0.20010629085965284</double>
+            <double>0.20004165991082626</double>
+            <double>0.2000163282917809</double>
+            <double>0.20000639975235651</double>
+            <double>0.20000250793397162</double>
+            <double>0.20000128528347269</double>
+            <double>0.20000097139635181</double>
+          </OC>
+          <FBiom>
+            <double>0.048817821341940328</double>
+            <double>0.0454768174686863</double>
+            <double>0.04053517977347413</double>
+            <double>0.034751335672245635</double>
+            <double>0.02889466210964059</double>
+            <double>0.021010831323590093</double>
+            <double>0.016611955528863465</double>
+            <double>0.013970450062385826</double>
+            <double>0.012146587676509207</double>
+            <double>0.011206398474921215</double>
+            <double>0.010597595876142443</double>
+            <double>0.010296022283355237</double>
+            <double>0.010146636206408427</double>
+            <double>0.01007263702173411</double>
+            <double>0.010035981133552417</double>
+            <double>0.010017823445135953</double>
+            <double>0.010008828937978052</double>
+            <double>0.010004373461203808</double>
+            <double>0.010002166417178235</double>
+            <double>0.01000107314622708</double>
+            <double>0.010000531524882381</double>
+            <double>0.010000321947990425</double>
+            <double>0.01000026096596906</double>
+          </FBiom>
+          <FInert>
+            <double>0.16265485133739674</double>
+            <double>0.19950014645338859</double>
+            <double>0.25734147506517074</double>
+            <double>0.33136631809342953</double>
+            <double>0.41580411302767362</double>
+            <double>0.55403683920939606</double>
+            <double>0.65441578922049071</double>
+            <double>0.73220109363209873</double>
+            <double>0.80309205219964452</double>
+            <double>0.85238369855173712</double>
+            <double>0.89610545965825317</double>
+            <double>0.92687748299529094</double>
+            <double>0.94853528900059547</double>
+            <double>0.9637783737931005</double>
+            <double>0.97450668274251984</double>
+            <double>0.98205742555350151</double>
+            <double>0.98737175023098722</double>
+            <double>0.99111205068681263</double>
+            <double>0.99374452957149861</double>
+            <double>0.99559730721868611</double>
+            <double>0.99690150549653478</double>
+            <double>0.99758853041133733</double>
+            <double>0.997828894793856</double>
+          </FInert>
+          <OCUnits>Total</OCUnits>
+        </SoilOrganicMatter>
+        <Analysis>
+          <Thickness>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>150.0</double>
+            <double>75.0</double>
+            <double>1475.0</double>
+          </Thickness>
+          <Rocks>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>0.0</double>
+            <double>60.0</double>
+          </Rocks>
+          <PH>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
+            <double>7.0</double>
+          </PH>
+          <CEC>
+            <double>16.014000000000003</double>
+            <double>16.014000000000003</double>
+            <double>10.93</double>
+            <double>10.93</double>
+            <double>10.93</double>
+          </CEC>
+          <ParticleSizeSand>
+            <double>8.0</double>
+            <double>8.0</double>
+            <double>60.0</double>
+            <double>60.0</double>
+            <double>60.0</double>
+          </ParticleSizeSand>
+          <ParticleSizeSilt>
+            <double>72.0</double>
+            <double>72.0</double>
+            <double>28.0</double>
+            <double>28.0</double>
+            <double>28.0</double>
+          </ParticleSizeSilt>
+          <ParticleSizeClay>
+            <double>20.0</double>
+            <double>20.0</double>
+            <double>12.0</double>
+            <double>12.0</double>
+            <double>12.0</double>
+          </ParticleSizeClay>
+        </Analysis>
+        <Sample name="Initial nitrogen">
+          <Thickness>
+            <double>10.0</double>
+            <double>20.0</double>
+            <double>30.0</double>
+            <double>40.0</double>
+            <double>50.0</double>
+            <double>130.0</double>
+            <double>40.0</double>
+            <double>130.0</double>
+            <double>75.0</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.08</double>
+            <double>117.12</double>
+            <double>50.0</double>
+            <double>20.0</double>
+          </Thickness>
+          <NO3>
+            <double>1.33</double>
+            <double>2.66</double>
+            <double>3.99</double>
+            <double>5.32</double>
+            <double>6.65</double>
+            <double>17.29</double>
+            <double>5.32</double>
+            <double>17.29</double>
+            <double>6.708333333333334</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.2731866666666667</double>
+            <double>0.27328</double>
+            <double>0.11666666666666667</double>
+            <double>0.04666666666666667</double>
+          </NO3>
+          <NH4>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+            <double>0.1</double>
+          </NH4>
+          <NO3Units>kgha</NO3Units>
+          <NH4Units>kgha</NH4Units>
+          <SWUnits>Volumetric</SWUnits>
+          <OCUnits>Total</OCUnits>
+          <PHUnits>Water</PHUnits>
+        </Sample>
+        <InitialWater name="Initial water">
+          <FractionFull>1</FractionFull>
+          <PercentMethod>FilledFromTop</PercentMethod>
+        </InitialWater>
         <Swim>
           <Salb>0.13</Salb>
           <CN2Bare>75</CN2Bare>
@@ -595,7 +1148,7 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
           <CNCov>0.8</CNCov>
           <KDul>0.1</KDul>
           <PSIDul>-100</PSIDul>
-          <VC>true</VC>
+          <VC>false</VC>
           <DTmin>0</DTmin>
           <DTmax>1440</DTmax>
           <MaxWaterIncrement>10</MaxWaterIncrement>
@@ -603,55 +1156,78 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
           <SoluteSpaceWeightingFactor>0</SoluteSpaceWeightingFactor>
           <Diagnostics>false</Diagnostics>
           <SwimSoluteParameters>
-            <Dis>15</Dis>
-            <Disp>1</Disp>
-            <A>1</A>
-            <DTHC>0</DTHC>
-            <DTHP>1</DTHP>
-            <WaterTableCl>0</WaterTableCl>
-            <WaterTableNO3>0</WaterTableNO3>
-            <WaterTableNH4>0</WaterTableNH4>
-            <WaterTableUrea>0</WaterTableUrea>
-            <WaterTableTracer>0</WaterTableTracer>
-            <WaterTableMineralisationInhibitor>0</WaterTableMineralisationInhibitor>
-            <WaterTableUreaseInhibitor>0</WaterTableUreaseInhibitor>
-            <WaterTableNitrificationInhibitor>0</WaterTableNitrificationInhibitor>
-            <WaterTableDenitrificationInhibitor>0</WaterTableDenitrificationInhibitor>
+            <Dis type="text" description="Dispersivity - dis ((cm^2/h)/(cm/h)^p) ">15</Dis>
+            <Disp type="text" description="Dispersivity Power - disp">1</Disp>
+            <A type="text" description="Tortuosity Constant - a">1.0</A>
+            <DTHC type="text" description="Tortuoisty Offset - dthc">0.0</DTHC>
+            <DTHP type="text" description="Tortuoisty Power - dthp">1.0</DTHP>
+            <WaterTableCl type="text" description="Water Table Cl Concentration (ppm)">0</WaterTableCl>
+            <WaterTableNO3 type="text" description="Water Table NO3 Concentration (ppm)">0.0</WaterTableNO3>
+            <WaterTableNH4 type="text" description="Water Table NH4 Concentration (ppm)">0.0</WaterTableNH4>
+            <WaterTableUrea type="text" description="Water Table Urea Concentration (ppm)">0.0</WaterTableUrea>
             <Thickness>
-              <double>1000</double>
-              <double>1000</double>
+              <double>150.0</double>
+              <double>150.0</double>
+              <double>150.0</double>
+              <double>75.0</double>
+              <double>1475.0</double>
             </Thickness>
+            <ThicknessUnits>mm</ThicknessUnits>
             <NO3Exco>
-              <double>0</double>
-              <double>0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
             </NO3Exco>
             <NO3FIP>
-              <double>1</double>
-              <double>1</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
             </NO3FIP>
             <NH4Exco>
-              <double>100</double>
-              <double>100</double>
+              <double>35.315318000000005</double>
+              <double>35.315318000000005</double>
+              <double>31.856410000000004</double>
+              <double>31.856410000000004</double>
+              <double>31.856410000000004</double>
             </NH4Exco>
             <NH4FIP>
-              <double>1</double>
-              <double>1</double>
+              <double>0.5481820000000001</double>
+              <double>0.5481820000000001</double>
+              <double>0.53009</double>
+              <double>0.53009</double>
+              <double>0.53009</double>
             </NH4FIP>
             <UreaExco>
-              <double>0</double>
-              <double>0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
             </UreaExco>
             <UreaFIP>
-              <double>1</double>
-              <double>1</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
             </UreaFIP>
             <ClExco>
-              <double>0</double>
-              <double>0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
+              <double>0.0</double>
             </ClExco>
             <ClFIP>
-              <double>1</double>
-              <double>1</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
+              <double>1.0</double>
             </ClFIP>
           </SwimSoluteParameters>
         </Swim>
@@ -710,11 +1286,131 @@ tav = tav + ([MaxtChange] + [MintChange]) / 2
           <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/L_08/Plot/ApsimFileReader" />
         </Plot>
       </Graph>
+      <Graph name="pond" shortcut="/simulations/SoilWat/GraphReport/pond">
+        <Plot shortcut="/simulations/SoilWat/GraphReport/pond/Plot">
+          <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/GraphReport/pond/Plot/ApsimFileReader" />
+        </Plot>
+      </Graph>
     </GraphReport>
-    <Graph name="pond" shortcut="/simulations/SoilWat/pond">
-      <Plot shortcut="/simulations/SoilWat/pond/Plot">
-        <GDApsimFileReader name="ApsimFileReader" shortcut="/simulations/SoilWat/pond/Plot/ApsimFileReader" />
+  </simulation>
+  <GraphReport>
+    <Graph name="L_01">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(1)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
       </Plot>
     </Graph>
-  </simulation>
+    <Graph name="L_02">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(2)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_03">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(3)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_04">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(4)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_05">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(5)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_06">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(6)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_07">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(7)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+    <Graph name="L_08">
+      <Legend>
+      </Legend>
+      <Plot>
+        <SeriesType>Solid line</SeriesType>
+        <PointType>None</PointType>
+        <colour>
+        </colour>
+        <X>Date</X>
+        <Y>sw(8)</Y>
+        <GDApsimFileReader name="ApsimFileReader" />
+      </Plot>
+    </Graph>
+  </GraphReport>
+  <Graph name="pond">
+    <Legend>
+      <CheckedTitles> SoilWat_HAS ConvTill</CheckedTitles>
+    </Legend>
+    <Plot>
+      <SeriesType>Solid line</SeriesType>
+      <PointType>Circle</PointType>
+      <colour>
+      </colour>
+      <X>Date</X>
+      <Y>pond</Y>
+      <GDApsimFileReader name="ApsimFileReader" />
+    </Plot>
+  </Graph>
 </folder>
