@@ -19,8 +19,6 @@ library(tidyr)
 info_raw <- read.csv("C:\\GitHubRepos\\2016_SAE_Tillage_ClimateChange\\simFiles\\SummaryResults\\all_Data.csv")
 
 summary(info_raw)
-
-
 ```
 
 # Check parameter values used in these runs
@@ -106,17 +104,47 @@ summary(info_work)
 
 ### Time series soil water
 
-```{r, fig.width=12, fig.height=10, echo=FALSE}
+
+```{r, fig.width=12, fig.height=6, echo=FALSE}
 info_work %>%
-#  filter(thisRain == 5) %>%
+  filter(thisRain == 1) %>%
  # filter(thisModel=="soilWat") %>%
+  filter(ks_value %in% c(1,9,62)) %>%
+  mutate(ks_value=factor(ks_value, levels=c(1,9,62))) %>%
   group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value,bd) %>%
   filter(Parameter=="thisBD") %>%
   summarise(effect=mean(esw)) %>%
-  ggplot(aes(x=year, y=effect, colour=factor(bd))) +
- # geom_line() + 
+  mutate(BulkDensity=factor(bd))%>%
+  ggplot(aes(x=year, y=effect, colour=BulkDensity)) +
+  geom_line() + 
   geom_point(alpha=0.5) +
-  facet_grid(ks_value~thisModel+rainP_value)
+ # facet_grid(ks_value~thisModel+rainP_value)+
+  facet_grid(ks_value~thisModel) +
+  ylab("Soil water in profile (mm)") +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(text = element_text(size=20))
+        
+```
+
+```{r, fig.width=12, fig.height=6, echo=FALSE}
+info_work %>%
+  filter(thisRain == 1) %>%
+ # filter(thisModel=="soilWat") %>%
+  filter(ks_value %in% c(1,9,62)) %>%
+  mutate(ks_value=factor(ks_value, levels=c(1,9,62))) %>%
+  group_by(year,thisModel,Parameter,ParamSet,thisKS,ks_value,rainP_value,bd) %>%
+  filter(Parameter=="thisBD") %>%
+  summarise(effect=mean(biomass)) %>%
+  mutate(BulkDensity=factor(bd))%>%
+  ggplot(aes(x=year, y=effect, colour=BulkDensity)) +
+  geom_line() + 
+  geom_point(alpha=0.5) +
+ # facet_grid(ks_value~thisModel+rainP_value)+
+  facet_grid(ks_value~thisModel) +
+  ylab("Total biomass (kg/ha)") +
+  theme(axis.text.x = element_text(angle = 45)) +
+  theme(text = element_text(size=20))
+        
 ```
 
 
